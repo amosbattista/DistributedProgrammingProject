@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/provider")
@@ -35,5 +36,11 @@ public class ProviderController {
     public void putProvider(@Valid @RequestBody ProviderEntity provider){
         log.info("[REST Controller] Put provider");
         providerService.updateProvider(provider);
+    }
+    @GetMapping("/getAvalaibleProviders")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<ProviderEntity> getAvailaibleProvider(){
+        log.info("[REST Controller] Get Available provider");
+        return providerService.getAvailableProviders();
     }
 }

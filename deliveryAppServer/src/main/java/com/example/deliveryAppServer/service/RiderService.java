@@ -8,6 +8,6 @@ public interface RiderService {
     public void login(String username, String password);
     public void updateRider(RiderEntity rider);
 
-    public void decreaseBalance(double value);
-    public void increaseBalance(double value);
+    public void decreaseBalance(long id, double value);
+    public void increaseBalance(long id, double value);
 }
