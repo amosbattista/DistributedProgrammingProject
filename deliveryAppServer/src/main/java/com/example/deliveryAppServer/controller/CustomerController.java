@@ -17,7 +17,6 @@ public class CustomerController {
     @Autowired
     private CustomerService customerService;
 
-
     @PostMapping("/postCustomer")
     @ResponseStatus(code = HttpStatus.CREATED)
     public void createNewCustomer(@Valid @RequestBody CustomerEntity customer){
