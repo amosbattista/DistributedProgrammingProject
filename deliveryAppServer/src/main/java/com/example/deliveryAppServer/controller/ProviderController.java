@@ -1,0 +1,39 @@
+package com.example.deliveryAppServer.controller;
+
+import com.example.deliveryAppServer.model.user.CustomerEntity;
+import com.example.deliveryAppServer.model.user.ProviderEntity;
+import com.example.deliveryAppServer.service.ProviderService;
+import lombok.extern.slf4j.Slf4j;
+import org.aspectj.apache.bcel.classfile.Module;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
+@RestController
+@RequestMapping("/api/provider")
+@Slf4j
+public class ProviderController {
+    /*
+    @Autowired
+    private OrderService orderService;
+    */
+
+    @Autowired
+    private ProviderService providerService;
+
+    @PostMapping("/postProvider")
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public void createNewProvider(@Valid @RequestBody ProviderEntity provider){
+        log.info("[REST Controller] Post new provider");
+        providerService.createNewProvider(provider);
+    }
+
+    @PutMapping("/putProvider")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void putProvider(@Valid @RequestBody ProviderEntity provider){
+        log.info("[REST Controller] Put provider");
+        providerService.updateProvider(provider);
+    }
+}
