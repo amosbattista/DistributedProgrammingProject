@@ -45,21 +45,14 @@ public class ProviderController {
         return providerService.getAvailableProviders();
     }
 
-    @PutMapping("/putEncreaseBalanceProvider")
-    @ResponseStatus(code = HttpStatus.OK)
-    public void putEncreaseBalanceProvider(@RequestBody Map<String, String> json){
-        Long providerId = new Long(json.get("providerId"));
-        Double value = new Double(json.get("value"));
-        log.info("[REST Controller] Put Encrease balance provider");
-        providerService.encreaseBalanceProvider(providerId, value);
-    }
 
-    @PutMapping("/putDecreaseBalanceProvider")
+
+    @PostMapping("/login")
     @ResponseStatus(code = HttpStatus.OK)
-    public void putDecreaseBalanceProvider(@RequestBody Map<String, String> json){
-        Long providerId = new Long(json.get("providerId"));
-        Double value = new Double(json.get("value"));
-        log.info("[REST Controller] Put Dencrease balance provider");
-        providerService.decreaseBalanceProvider(providerId, value);
+    public Long login(@RequestBody Map<String, String> params){
+        log.info("[REST Controller] Login provider");
+        String username = params.get("username");
+        String password = params.get("password");
+        return providerService.loginProvider(username, password);
     }
 }

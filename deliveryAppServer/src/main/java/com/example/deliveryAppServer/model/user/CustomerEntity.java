@@ -2,6 +2,7 @@ package com.example.deliveryAppServer.model.user;
 
 import com.example.deliveryAppServer.model.order.OrderEntity;
 import lombok.Data;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @Entity
 @Data
 @EntityListeners(AuditingEntityListener.class) //Non necessario
+@DynamicUpdate
 public class CustomerEntity extends PersonEntity implements Serializable {
 
     @NotBlank
@@ -20,6 +22,10 @@ public class CustomerEntity extends PersonEntity implements Serializable {
 
     @OneToMany(targetEntity= OrderEntity.class,cascade = CascadeType.ALL , fetch = FetchType.LAZY, mappedBy = "customer")
     private List<OrderEntity> orderList;
+
+
+
+
 
 
 }

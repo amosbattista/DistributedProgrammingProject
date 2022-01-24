@@ -1,8 +1,10 @@
 package com.example.deliveryAppServer.service.impl;
 
+
 import com.example.deliveryAppServer.exception.UserAlreadyExists;
 import com.example.deliveryAppServer.exception.UserNotFound;
 import com.example.deliveryAppServer.model.user.CustomerEntity;
+import com.example.deliveryAppServer.model.user.UserEntity;
 import com.example.deliveryAppServer.repository.CustomerRepository;
 import com.example.deliveryAppServer.service.CustomerService;
 import lombok.extern.slf4j.Slf4j;
@@ -10,10 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
-public class customerServiceImpl implements CustomerService {
+public class CustomerServiceImpl extends UserServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
@@ -44,32 +47,28 @@ public class customerServiceImpl implements CustomerService {
             throw new UserNotFound();
         }
 
-        if(customerRepository.existsByUsername(customer.getUsername())){
+        if(customerRepository.existsByUsernameExceptMyself(customer.getId(), customer.getUsername())){
             throw new UserAlreadyExists("Username "+customer.getUsername()+" not available");
         }
 
-        if(customerRepository.existsByTelephoneNumber(customer.getTelephoneNumber())){
+        if(customerRepository.existsByTelephoneNumberExceptMyself(customer.getId(),customer.getTelephoneNumber())){
             throw new UserAlreadyExists("Telephone Number "+customer.getTelephoneNumber()+" not available");
         }
 
 
-        customerRepository.save(customer);
+
         log.info("[SERVICE]"+customer.getUsername()+" successfully updated!");
+        customerRepository.save(customer);
+     //   updateBalance(20.12, customer.getId(), customerRepository);
+      //
 
     }
+
 
     @Override
-    public void decreaseBalance(double value) {
-
+    public Long loginCustomer (String username, String password){
+        return login(username, password, customerRepository);
     }
 
-    @Override
-    public void encreaseBalance(double value) {
 
-    }
-
-    @Override
-    public Long login(String username, String password) {
-        return null;
-    }
 }

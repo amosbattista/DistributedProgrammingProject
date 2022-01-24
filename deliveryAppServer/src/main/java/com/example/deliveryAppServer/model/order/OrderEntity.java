@@ -45,7 +45,6 @@ public class OrderEntity implements Serializable {
     private RiderEntity rider;
 
 
-
     @NotBlank
     @Enumerated(EnumType.STRING)
     private OrderType orderType;
