@@ -17,7 +17,7 @@ import java.util.List;
 public class ProviderEntity extends PersonEntity implements Serializable {
 
     @NotBlank
-    private String name;
+    private String providerName;
 
     @NotBlank
     private String cuisine;

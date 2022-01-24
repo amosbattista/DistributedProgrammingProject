@@ -1,5 +1,6 @@
 package com.example.deliveryAppServer.service.impl;
 
+import com.example.deliveryAppServer.exception.InsufficientBalanceException;
 import com.example.deliveryAppServer.exception.UserAlreadyExists;
 import com.example.deliveryAppServer.exception.UserNotFound;
 import com.example.deliveryAppServer.model.user.ProviderEntity;
@@ -66,6 +67,8 @@ public class ProviderServiceImpl implements ProviderService {
         }
         Double oldBalance = provider.getBalance();
         Double newBalance = oldBalance - value;
+        if(newBalance < 0)
+            throw new InsufficientBalanceException();
         provider.setBalance(newBalance);
         providerRepository.save(provider);
 
