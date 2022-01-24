@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/provider")
@@ -42,5 +43,23 @@ public class ProviderController {
     public List<ProviderEntity> getAvailaibleProvider(){
         log.info("[REST Controller] Get Available provider");
         return providerService.getAvailableProviders();
+    }
+
+    @PutMapping("/putEncreaseBalanceProvider")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void putEncreaseBalanceProvider(@RequestBody Map<String, String> json){
+        Long providerId = new Long(json.get("providerId"));
+        Double value = new Double(json.get("value"));
+        log.info("[REST Controller] Put Encrease balance provider");
+        providerService.encreaseBalanceProvider(providerId, value);
+    }
+
+    @PutMapping("/putDecreaseBalanceProvider")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void putDecreaseBalanceProvider(@RequestBody Map<String, String> json){
+        Long providerId = new Long(json.get("providerId"));
+        Double value = new Double(json.get("value"));
+        log.info("[REST Controller] Put Dencrease balance provider");
+        providerService.decreaseBalanceProvider(providerId, value);
     }
 }
