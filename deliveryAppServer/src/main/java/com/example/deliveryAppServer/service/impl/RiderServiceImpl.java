@@ -1,6 +1,7 @@
 package com.example.deliveryAppServer.service.impl;
 
 import com.example.deliveryAppServer.exception.InsufficientBalanceException;
+import com.example.deliveryAppServer.exception.InvalidCredentials;
 import com.example.deliveryAppServer.exception.UserAlreadyExists;
 import com.example.deliveryAppServer.exception.UserNotFound;
 import com.example.deliveryAppServer.model.user.RiderEntity;
@@ -35,7 +36,23 @@ public class RiderServiceImpl implements RiderService {
     }
 
     @Override
-    public void login(String username, String password){}
+    public long login(String username, String password){
+
+        RiderEntity riderEntity;
+
+        try{
+            riderEntity = riderRepository.findByUsername(username);
+        }catch(NoSuchElementException ex){
+            throw new UserNotFound();
+        }
+
+        if(riderEntity.getPassword().equals(password)){
+            return riderEntity.getId();
+        }
+        else{
+            throw new InvalidCredentials();
+        }
+    }
 
     @Override
     public void updateRider(RiderEntity rider){
