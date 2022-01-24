@@ -35,5 +35,29 @@ public class RiderController {
         riderService.updateRider(rider);
     }
 
+    /**
+     * METODO USATO SOLO PER TESTARE
+     * @param id
+     * @param value
+     */
+    @GetMapping("/getIncreaseBalance")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void getIncreaseBalance(@RequestParam long id, @RequestParam double value){
+        log.info("[REST Controller] Get increase balance");
+        riderService.increaseBalance(id, value);
+    }
+
+    /**
+     * METODO USATO SOLO PER TESTARE
+     * @param id
+     * @param value
+     */
+    @GetMapping("/getDecreaseBalance")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void getDecreaseBalance(@RequestParam long id, @RequestParam double value){
+        log.info("[REST Controller] Get decrease balance");
+        riderService.decreaseBalance(id, value);
+    }
+
 
 }
