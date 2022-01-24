@@ -23,7 +23,6 @@ public class OrderServiceImpl implements OrderService{
 
     @Autowired
     private OrderRepository orderRepository;
-    @Autowired
     private OrderStateGraph orderStateGraph;
 
     @Override
@@ -67,6 +66,7 @@ public class OrderServiceImpl implements OrderService{
         }catch (NoSuchElementException ex){
             throw new OrderNotFound();
         }
+        orderStateGraph = OrderStateGraph.getOrderStateGraphInstance();
         if(orderStateGraph.checkNextState(order.getOrderState(), orderState, order.getOrderType())){
             order.setOrderState(orderState);
             orderRepository.save(order);
