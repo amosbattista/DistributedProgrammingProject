@@ -33,13 +33,13 @@ public class RiderController {
         riderService.createNewRider(rider);
     }
 
-    @PostMapping("login")
-    @ResponseStatus(code = HttpStatus.CREATED)
-    public long login(@RequestBody Map<String, String> params){
+    @PostMapping("/login")
+    @ResponseStatus(code = HttpStatus.OK)
+    public Long login(@RequestBody Map<String, String> params){
         log.info("[REST Controller] Login rider");
         String username = params.get("username");
         String password = params.get("password");
-        return riderService.login(username, password);
+        return riderService.loginRider(username, password);
     }
 
     @PutMapping("/updateRider")
@@ -78,29 +78,7 @@ public class RiderController {
     }
 
 
-    /**
-     * METODO USATO SOLO PER TESTARE
-     * @param id
-     * @param value
-     */
-    @GetMapping("/getIncreaseBalance")
-    @ResponseStatus(code = HttpStatus.OK)
-    public void getIncreaseBalance(@RequestParam long id, @RequestParam double value){
-        log.info("[REST Controller] Get increase balance");
-        riderService.increaseBalance(id, value);
-    }
 
-    /**
-     * METODO USATO SOLO PER TESTARE
-     * @param id
-     * @param value
-     */
-    @GetMapping("/getDecreaseBalance")
-    @ResponseStatus(code = HttpStatus.OK)
-    public void getDecreaseBalance(@RequestParam long id, @RequestParam double value){
-        log.info("[REST Controller] Get decrease balance");
-        riderService.decreaseBalance(id, value);
-    }
 
 
 }

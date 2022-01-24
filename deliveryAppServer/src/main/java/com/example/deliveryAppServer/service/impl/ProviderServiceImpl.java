@@ -17,7 +17,7 @@ import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
-public class ProviderServiceImpl implements ProviderService {
+public class ProviderServiceImpl extends UserServiceImpl implements ProviderService {
     @Autowired
     private ProviderRepository providerRepository;
 
@@ -57,40 +57,15 @@ public class ProviderServiceImpl implements ProviderService {
 
     }
 
-    @Override
-    public void decreaseBalanceProvider(Long id, Double value) {
-        ProviderEntity provider;
-        try{
-            provider = providerRepository.findById(id).get();
-        }catch(NoSuchElementException ex){
-            throw new UserNotFound();
-        }
-        Double oldBalance = provider.getBalance();
-        Double newBalance = oldBalance - value;
-        if(newBalance < 0)
-            throw new InsufficientBalanceException();
-        provider.setBalance(newBalance);
-        providerRepository.save(provider);
-
-    }
-
-    @Override
-    public void encreaseBalanceProvider(Long id, Double value) {
-        ProviderEntity provider;
-        try{
-            provider = providerRepository.findById(id).get();
-        }catch(NoSuchElementException ex){
-            throw new UserNotFound();
-        }
-        Double oldBalance = provider.getBalance();
-        Double newBalance = oldBalance + value;
-        provider.setBalance(newBalance);
-        providerRepository.save(provider);
-    }
 
     @Override
     public List<ProviderEntity> getAvailableProviders() {
         return providerRepository.findAllByIsAvailable(true);
+    }
+
+    @Override
+    public Long loginProvider(String username, String password) {
+        return login(username, password, providerRepository);
     }
 }
 

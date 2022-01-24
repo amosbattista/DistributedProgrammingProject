@@ -15,7 +15,7 @@ import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
-public class RiderServiceImpl implements RiderService {
+public class RiderServiceImpl extends UserServiceImpl implements RiderService {
 
     @Autowired
     private RiderRepository riderRepository;
@@ -24,34 +24,22 @@ public class RiderServiceImpl implements RiderService {
     public void createNewRider(RiderEntity rider){
 
         if(riderRepository.existsByUsername(rider.getUsername())){
-            throw new UserAlreadyExists("Rider " + rider.getUsername() + " already exists!");
+            throw new UserAlreadyExists("Rider " + rider.getUsername() + " already exists!");   //NON FUNZIONA CON ALTRE ENTITA'
         }
 
         if(riderRepository.existsByTelephoneNumber(rider.getTelephoneNumber())){
-            throw new UserAlreadyExists("Rider tel. number " + rider.getTelephoneNumber() + " already exists!");
+            throw new UserAlreadyExists("Rider tel. number " + rider.getTelephoneNumber() + " already exists!"); //NON FUNZIONA CON ALTRE ENTITA'
         }
 
         riderRepository.save(rider);
         log.info("[SERVICE] New rider " + rider.getUsername() + " created!");
     }
 
-    @Override
-    public long login(String username, String password){
 
-        RiderEntity riderEntity;
+    public Long loginRider(String username, String password){
 
-        try{
-            riderEntity = riderRepository.findByUsername(username);
-        }catch(NoSuchElementException ex){
-            throw new UserNotFound();
-        }
+        return login(username, password, riderRepository);
 
-        if(riderEntity.getPassword().equals(password)){
-            return riderEntity.getId();
-        }
-        else{
-            throw new InvalidCredentials();
-        }
     }
 
     @Override
@@ -69,51 +57,9 @@ public class RiderServiceImpl implements RiderService {
             throw new UserAlreadyExists("Telephone Number "+rider.getTelephoneNumber()+" not available");
         }
 
+
         riderRepository.save(rider);
         log.info("[SERVICE]"+rider.getUsername()+" successfully updated!");
     }
 
-    @Override
-    public void decreaseBalance(long id, double value){
-
-        RiderEntity riderEntity;
-
-        try{
-            riderEntity = riderRepository.findById(id).get();
-        }catch(NoSuchElementException ex){
-            throw new UserNotFound();
-        }
-
-        if(riderEntity == null){
-            throw new UserNotFound();
-        }
-
-        double currentBalance = riderEntity.getBalance();
-        double newBalance = currentBalance - value;
-        if(newBalance < 0)
-            throw new InsufficientBalanceException();
-        else {
-            riderEntity.setBalance(currentBalance - value);
-            riderRepository.save(riderEntity);
-        }
-
-    }
-
-    @Override
-    public void increaseBalance(long id, double value){
-
-        RiderEntity riderEntity;
-
-        try{
-            riderEntity = riderRepository.findById(id).get();
-        }catch(NoSuchElementException ex){
-            throw new UserNotFound();
-        }
-
-        double currentBalance = riderEntity.getBalance();
-        riderEntity.setBalance(currentBalance + value);
-
-        riderRepository.save(riderEntity);
-
-    }
 }

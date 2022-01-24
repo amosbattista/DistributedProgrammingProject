@@ -2,6 +2,7 @@ package com.example.deliveryAppServer.model.user;
 
 import lombok.Data;
 import com.example.deliveryAppServer.model.order.OrderEntity;
+import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -12,6 +13,7 @@ import java.util.List;
 @Entity
 @Data
 @EntityListeners(AuditingEntityListener.class) //Non necessario
+@DynamicUpdate
 public class RiderEntity extends PersonEntity implements Serializable {
 
     @NotBlank
