@@ -10,6 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+
 @Service
 @Slf4j
 public class RiderServiceImpl implements RiderService {
@@ -57,7 +59,13 @@ public class RiderServiceImpl implements RiderService {
     @Override
     public void decreaseBalance(long id, double value){
 
-        RiderEntity riderEntity = riderRepository.findById(id).get();
+        RiderEntity riderEntity;
+
+        try{
+            riderEntity = riderRepository.findById(id).get();
+        }catch(NoSuchElementException ex){
+            throw new UserNotFound();
+        }
 
         if(riderEntity == null){
             throw new UserNotFound();
@@ -77,9 +85,11 @@ public class RiderServiceImpl implements RiderService {
     @Override
     public void increaseBalance(long id, double value){
 
-        RiderEntity riderEntity = riderRepository.findById(id).get();
+        RiderEntity riderEntity;
 
-        if(riderEntity == null){
+        try{
+            riderEntity = riderRepository.findById(id).get();
+        }catch(NoSuchElementException ex){
             throw new UserNotFound();
         }
 
