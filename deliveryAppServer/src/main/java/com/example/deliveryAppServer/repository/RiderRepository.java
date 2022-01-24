@@ -11,6 +11,7 @@ public interface RiderRepository extends JpaRepository<RiderEntity,Long> {
 
     boolean existsByUsername(String username);
     boolean existsByTelephoneNumber(String telephoneNumber);
+    RiderEntity findByUsername(String username);
 
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM UserEntity u WHERE u.id != :id AND u.username = :username")
     boolean existsByUsernameExceptMyself(@Param("id") long id, @Param("username") String username);

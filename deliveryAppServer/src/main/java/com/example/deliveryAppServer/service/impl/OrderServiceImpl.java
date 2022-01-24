@@ -67,7 +67,7 @@ public class OrderServiceImpl implements OrderService{
             throw new OrderNotFound();
         }
         orderStateGraph = OrderStateGraph.getOrderStateGraphInstance();
-        if(orderStateGraph.checkNextState(order.getOrderState(), orderState, order.getOrderType())){
+        if(OrderStateGraph.getOrderStateGraphInstance().checkNextState(order.getOrderState(), orderState, order.getOrderType())){
             order.setOrderState(orderState);
             orderRepository.save(order);
         }
