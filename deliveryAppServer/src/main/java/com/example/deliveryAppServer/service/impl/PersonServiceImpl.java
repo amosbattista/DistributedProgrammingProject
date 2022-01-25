@@ -12,19 +12,19 @@ import org.springframework.stereotype.Service;
 import java.util.NoSuchElementException;
 
 @Service
-public class PersonServiceImpl implements PersonService {
+public class PersonServiceImpl <Person extends PersonEntity, PersonId extends Long> implements PersonService <Person, PersonId>{
 
     @Autowired
-    PersonRepository personRepository;
+    PersonRepository<Person, PersonId> personRepository;
 
     @Override
     public Long login(String username, String password) {
 
 
-        UserEntity personEntity;
+        Person personEntity;
 
         try{
-            personEntity = (PersonEntity) personRepository.findByUsername(username);
+            personEntity = personRepository.findByUsername(username);
         }catch(NoSuchElementException ex){
             throw new UserNotFound();
         }
@@ -38,12 +38,12 @@ public class PersonServiceImpl implements PersonService {
     }
 
     @Override
-    public void updateBalance(Double value, Long id) {
+    public void updateBalance(Double value, PersonId id) {
 
-        PersonEntity user;
+        Person user;
 
         try{
-            user = (PersonEntity) personRepository.findById(id).get();
+            user =  personRepository.findById(id).get();
         }
         catch(NoSuchElementException ex){
             throw new UserNotFound();
