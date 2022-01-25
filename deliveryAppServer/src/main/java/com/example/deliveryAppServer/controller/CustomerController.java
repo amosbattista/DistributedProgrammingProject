@@ -6,7 +6,6 @@ import com.example.deliveryAppServer.model.user.ProviderEntity;
 import com.example.deliveryAppServer.service.CustomerService;
 import com.example.deliveryAppServer.service.OrderService;
 import com.example.deliveryAppServer.service.ProviderService;
-import com.example.deliveryAppServer.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Or;
 import org.hibernate.criterion.Order;
@@ -84,7 +83,7 @@ public class CustomerController {
         log.info("[REST Controller] Login CUSTOMER");
         String username = params.get("username");
         String password = params.get("password");
-        return customerService.loginCustomer(username, password);
+        return customerService.login(username, password);
     }
 
 

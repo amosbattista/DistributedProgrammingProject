@@ -24,7 +24,6 @@ public class ProviderController {
     @Autowired
     private OrderService orderService;
 
-
     @Autowired
     private ProviderService providerService;
 
@@ -56,7 +55,7 @@ public class ProviderController {
         log.info("[REST Controller] Login provider");
         String username = params.get("username");
         String password = params.get("password");
-        return providerService.loginProvider(username, password);
+        return providerService.login(username, password);
     }
 
     @GetMapping("/getPendingOrders")

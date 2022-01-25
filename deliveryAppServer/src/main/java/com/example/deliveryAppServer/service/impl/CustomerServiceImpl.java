@@ -16,10 +16,15 @@ import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
-public class CustomerServiceImpl extends UserServiceImpl implements CustomerService {
+public class CustomerServiceImpl extends PersonServiceImpl implements CustomerService {
 
     @Autowired
     private CustomerRepository customerRepository;
+
+    @Autowired
+    public CustomerServiceImpl(CustomerRepository customerRepository){
+        personRepository = customerRepository;
+    }
 
     @Override
     public void createNewCustomer(CustomerEntity customer) {
@@ -62,12 +67,6 @@ public class CustomerServiceImpl extends UserServiceImpl implements CustomerServ
      //   updateBalance(20.12, customer.getId(), customerRepository);
       //
 
-    }
-
-
-    @Override
-    public Long loginCustomer (String username, String password){
-        return login(username, password, customerRepository);
     }
 
 

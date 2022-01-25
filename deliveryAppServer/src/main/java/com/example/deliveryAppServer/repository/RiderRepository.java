@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface RiderRepository extends JpaRepository<RiderEntity,Long>, UserRepository<RiderEntity,Long> {
+public interface RiderRepository extends JpaRepository<RiderEntity,Long>, PersonRepository<RiderEntity,Long> {
 
     boolean existsByUsername(String username);
     boolean existsByTelephoneNumber(String telephoneNumber);

@@ -15,10 +15,15 @@ import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
-public class RiderServiceImpl extends UserServiceImpl implements RiderService {
+public class RiderServiceImpl extends PersonServiceImpl implements RiderService {
 
     @Autowired
     private RiderRepository riderRepository;
+
+    @Autowired
+    public RiderServiceImpl(RiderRepository riderRepository){
+        personRepository = riderRepository;
+    }
 
     @Override
     public void createNewRider(RiderEntity rider){
@@ -33,13 +38,6 @@ public class RiderServiceImpl extends UserServiceImpl implements RiderService {
 
         riderRepository.save(rider);
         log.info("[SERVICE] New rider " + rider.getUsername() + " created!");
-    }
-
-
-    public Long loginRider(String username, String password){
-
-        return login(username, password, riderRepository);
-
     }
 
     @Override

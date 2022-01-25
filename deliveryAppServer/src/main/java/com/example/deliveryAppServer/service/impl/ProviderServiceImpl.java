@@ -17,9 +17,14 @@ import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
-public class ProviderServiceImpl extends UserServiceImpl implements ProviderService {
+public class ProviderServiceImpl extends PersonServiceImpl implements ProviderService {
     @Autowired
     private ProviderRepository providerRepository;
+
+    @Autowired
+    ProviderServiceImpl(ProviderRepository providerRepository){
+        personRepository = providerRepository;
+    }
 
     @Override
     public void createNewProvider(ProviderEntity provider) {
@@ -63,9 +68,5 @@ public class ProviderServiceImpl extends UserServiceImpl implements ProviderServ
         return providerRepository.findAllByIsAvailable(true);
     }
 
-    @Override
-    public Long loginProvider(String username, String password) {
-        return login(username, password, providerRepository);
-    }
 }
 

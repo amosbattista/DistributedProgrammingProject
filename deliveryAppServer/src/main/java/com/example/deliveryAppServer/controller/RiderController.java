@@ -39,7 +39,7 @@ public class RiderController {
         log.info("[REST Controller] Login rider");
         String username = params.get("username");
         String password = params.get("password");
-        return riderService.loginRider(username, password);
+        return riderService.login(username, password);
     }
 
     @PutMapping("/updateRider")
