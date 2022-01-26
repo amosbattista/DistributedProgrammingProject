@@ -6,6 +6,7 @@ import com.example.deliveryAppServer.model.user.ProviderEntity;
 import com.example.deliveryAppServer.model.user.RiderEntity;
 import com.example.deliveryAppServer.model.user.UserEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import com.example.deliveryAppServer.model.user.CustomerEntity;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -27,29 +28,25 @@ public class OrderEntity implements Serializable {
     private Long id;
 
 
-    @ManyToMany
-    @JoinTable(
-            name = "dish_ordered",
-            joinColumns = @JoinColumn(name = "order_id"),
-            inverseJoinColumns = @JoinColumn(name = "dish_id"))
-    private List<DishEntity> dishList;
+    @OneToMany(targetEntity=DishOrderAssociation.class,cascade = CascadeType.MERGE , fetch = FetchType.LAZY, mappedBy = "order")
+    @NotNull
+    private List<DishOrderAssociation> dishOrderAssociations;
 
-//
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotNull
     @ManyToOne(targetEntity= CustomerEntity.class, fetch = FetchType.LAZY)
     @JoinColumn(name="customerId", nullable = false)
     private CustomerEntity customer;
 
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotNull
     @ManyToOne( targetEntity= ProviderEntity.class, fetch = FetchType.LAZY)
     @JoinColumn(name="providerId", nullable = false)
     private ProviderEntity provider;
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @ManyToOne(targetEntity= RiderEntity.class, fetch = FetchType.LAZY)
     @JoinColumn(name="riderId")
     private RiderEntity rider;
