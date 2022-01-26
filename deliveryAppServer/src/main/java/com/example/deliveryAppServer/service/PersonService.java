@@ -1,7 +1,9 @@
 package com.example.deliveryAppServer.service;
 
-public interface PersonService {
+import com.example.deliveryAppServer.model.user.PersonEntity;
+
+public interface PersonService<Person extends PersonEntity, PersonId extends Long> {
 
     public Long login(String username, String password);
-    public void updateBalance(Double value, Long id);
+    public void updateBalance(Double value, PersonId id);
 }
