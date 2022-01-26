@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import static com.example.deliveryAppServer.model.enumerations.OrderState.PENDING;
+
 @Service
 @Slf4j
 public class OrderServiceImpl implements OrderService{
@@ -27,6 +29,7 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public void createNewOrder(OrderEntity order) {
+        order.setOrderState(PENDING);
         orderRepository.save(order);
     }
 

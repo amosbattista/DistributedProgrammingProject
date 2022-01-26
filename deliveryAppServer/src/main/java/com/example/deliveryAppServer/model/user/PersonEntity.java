@@ -17,6 +17,7 @@ import java.time.LocalDate;
 @Data
 @EntityListeners(AuditingEntityListener.class) //Non necessario
 @DynamicUpdate
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class PersonEntity extends UserEntity implements Serializable {
 
     @NotBlank

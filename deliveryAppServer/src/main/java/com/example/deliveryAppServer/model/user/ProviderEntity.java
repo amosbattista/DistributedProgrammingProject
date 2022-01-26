@@ -16,6 +16,7 @@ import java.util.List;
 @Data
 @EntityListeners(AuditingEntityListener.class) //Non necessario
 @DynamicUpdate
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class ProviderEntity extends PersonEntity implements Serializable {
 
     @NotBlank

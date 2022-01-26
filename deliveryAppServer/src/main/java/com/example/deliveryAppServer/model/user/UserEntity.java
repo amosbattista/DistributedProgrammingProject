@@ -11,6 +11,7 @@ import java.io.Serializable;
 @Data
 @EntityListeners(AuditingEntityListener.class) //Non necessario
 @DynamicUpdate
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public abstract class UserEntity implements Serializable {
 
     @Id
