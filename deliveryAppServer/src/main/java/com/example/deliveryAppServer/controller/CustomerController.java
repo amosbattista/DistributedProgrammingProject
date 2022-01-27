@@ -1,5 +1,6 @@
 package com.example.deliveryAppServer.controller;
 
+import com.example.deliveryAppServer.model.order.DishOrderAssociation;
 import com.example.deliveryAppServer.model.order.OrderEntity;
 import com.example.deliveryAppServer.model.user.CustomerEntity;
 import com.example.deliveryAppServer.model.user.ProviderEntity;
@@ -75,6 +76,7 @@ public class CustomerController {
         log.info("[REST Controller] Post order");
         orderService.createNewOrder(order);
 
+
     }
 
     @PostMapping("/login")
@@ -84,6 +86,14 @@ public class CustomerController {
         String username = params.get("username");
         String password = params.get("password");
         return customerService.login(username, password);
+    }
+
+    @PutMapping("/balance")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void increaseBalance(@RequestParam(name = "value") Double increment, @RequestParam(name = "id") Long id){
+        log.info("[REST Controller] Increase Customer Balance");
+        customerService.updateBalance(increment, id);
+
     }
 
 

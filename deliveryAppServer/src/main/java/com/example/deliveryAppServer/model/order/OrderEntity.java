@@ -63,6 +63,8 @@ public class OrderEntity implements Serializable {
     @NotNull
     private LocalDateTime deliveryTime;
 
+    private double price;
+
     private static final int minuteOffsetDeliveryTime = 10;
 
 

@@ -38,7 +38,7 @@ public class PersonServiceImpl <Person extends PersonEntity, PersonId extends Lo
     }
 
     @Override
-    public void updateBalance(Double value, PersonId id) {
+    public void updateBalance(Double valueIncrement, PersonId id) {
 
         Person user;
 
@@ -49,7 +49,7 @@ public class PersonServiceImpl <Person extends PersonEntity, PersonId extends Lo
             throw new UserNotFound();
         }
 
-        user.updateBalance(value);
+        user.updateBalance(valueIncrement);
         personRepository.save(user);
 
 

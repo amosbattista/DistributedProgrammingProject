@@ -2,6 +2,7 @@ package com.example.deliveryAppServer.model.user;
 
 import com.example.deliveryAppServer.exception.InsufficientBalanceException;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -32,8 +33,10 @@ public abstract class PersonEntity extends UserEntity implements Serializable {
     @Column(nullable = false)
     private LocalDate birthDate;
 
+    @NotBlank
     private String iban;
 
+    @NotBlank
     @Column(unique = true)
     @Pattern(regexp ="^\\s*(?:\\+?(\\d{1,3}))?[-. (]*(\\d{3})[-. )]*(\\d{3})[-. ]*(\\d{4})(?: *x(\\d+))?\\s*$", message = "Wrong telephone number!")
     private String telephoneNumber;

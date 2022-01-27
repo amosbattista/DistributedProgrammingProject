@@ -26,9 +26,6 @@ public class OrderServiceImpl implements OrderService{
     @Autowired
     private OrderRepository orderRepository;
 
-    @Autowired
-    private DishOrderAssociationRepository dishOrderAssociationRepository;
-
     private OrderStateGraph orderStateGraph;
 
     @Override
@@ -37,9 +34,17 @@ public class OrderServiceImpl implements OrderService{
         order = orderRepository.save(order);
 
         List<DishOrderAssociation> doaList = order.getDishOrderAssociations();
+        Double total = 0.0;
         for(DishOrderAssociation doa : doaList){
             doa.setOrder(order);
+            total+=doa.getDish().getPrice();
         }
+
+
+
+        order.setPrice(total);
+
+
         orderRepository.save(order);
 
     }

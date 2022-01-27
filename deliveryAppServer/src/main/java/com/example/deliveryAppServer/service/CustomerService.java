@@ -7,5 +7,4 @@ public interface CustomerService extends PersonService {
 
     public void createNewCustomer(CustomerEntity customer) throws UserAlreadyExists;
     public void updateCustomer(CustomerEntity customer);
-
 }

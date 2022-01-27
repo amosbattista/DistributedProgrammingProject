@@ -46,28 +46,38 @@ public class CustomerServiceImpl extends PersonServiceImpl implements CustomerSe
     }
 
     @Override
-    public void updateCustomer(CustomerEntity customer) {
+    public void updateCustomer(CustomerEntity newCustomer) {
 
-        if(!customerRepository.existsById(customer.getId())){
+        if(newCustomer.getIban()==null || !customerRepository.existsById(newCustomer.getId())){
             throw new UserNotFound();
         }
 
-        if(customerRepository.existsByUsernameExceptMyself(customer.getId(), customer.getUsername())){
-            throw new UserAlreadyExists("Username "+customer.getUsername()+" not available");
+        CustomerEntity prevCustomer = customerRepository.getById(newCustomer.getId());
+
+        if(customerRepository.existsByUsernameExceptMyself(newCustomer.getId(), newCustomer.getUsername())){
+            throw new UserAlreadyExists("Username "+newCustomer.getUsername()+" not available");
         }
 
-        if(customerRepository.existsByTelephoneNumberExceptMyself(customer.getId(),customer.getTelephoneNumber())){
-            throw new UserAlreadyExists("Telephone Number "+customer.getTelephoneNumber()+" not available");
+        if(customerRepository.existsByTelephoneNumberExceptMyself(newCustomer.getId(),newCustomer.getTelephoneNumber())){
+            throw new UserAlreadyExists("Telephone Number "+newCustomer.getTelephoneNumber()+" not available");
         }
 
+        newCustomer.setBalance(prevCustomer.getBalance());
+
+        if(newCustomer.getPassword()==null || newCustomer.getPassword().isBlank())
+            newCustomer.setPassword(prevCustomer.getPassword());
 
 
-        log.info("[SERVICE]"+customer.getUsername()+" successfully updated!");
-        customerRepository.save(customer);
+        log.info("[SERVICE]"+newCustomer.getUsername()+" successfully updated!");
+        customerRepository.save(newCustomer);
+
+
+
      //   updateBalance(20.12, customer.getId(), customerRepository);
       //
 
     }
+
 
 
 }
