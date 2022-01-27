@@ -13,6 +13,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @EntityListeners(AuditingEntityListener.class)
+@IdClass(DishOrderAssociationKey.class)
 public class DishOrderAssociation implements Serializable {
 
     @Id

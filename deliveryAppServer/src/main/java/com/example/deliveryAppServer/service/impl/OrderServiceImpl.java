@@ -8,6 +8,7 @@ import com.example.deliveryAppServer.model.enumerations.OrderState;
 import com.example.deliveryAppServer.model.enumerations.OrderType;
 import com.example.deliveryAppServer.model.order.DishOrderAssociation;
 import com.example.deliveryAppServer.model.order.OrderEntity;
+import com.example.deliveryAppServer.repository.DishOrderAssociationRepository;
 import com.example.deliveryAppServer.repository.OrderRepository;
 import com.example.deliveryAppServer.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,9 +26,6 @@ public class OrderServiceImpl implements OrderService{
 
     @Autowired
     private OrderRepository orderRepository;
-
-    @Autowired
-    private DishOrderAssociationRepository dishOrderAssociationRepository;
 
     private OrderStateGraph orderStateGraph;
 
