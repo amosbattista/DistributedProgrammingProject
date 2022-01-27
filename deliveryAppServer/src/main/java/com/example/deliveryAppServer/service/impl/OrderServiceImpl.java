@@ -6,8 +6,8 @@ import com.example.deliveryAppServer.exception.IllegalOrderType;
 import com.example.deliveryAppServer.exception.OrderNotFound;
 import com.example.deliveryAppServer.model.enumerations.OrderState;
 import com.example.deliveryAppServer.model.enumerations.OrderType;
+import com.example.deliveryAppServer.model.order.DishOrderAssociation;
 import com.example.deliveryAppServer.model.order.OrderEntity;
-import com.example.deliveryAppServer.model.user.ProviderEntity;
 import com.example.deliveryAppServer.repository.OrderRepository;
 import com.example.deliveryAppServer.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +25,23 @@ public class OrderServiceImpl implements OrderService{
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private DishOrderAssociationRepository dishOrderAssociationRepository;
+
     private OrderStateGraph orderStateGraph;
 
     @Override
     public void createNewOrder(OrderEntity order) {
         order.setOrderState(PENDING);
+        order = orderRepository.save(order);
+
+        List<DishOrderAssociation> doaList = order.getDishOrderAssociations();
+        for(DishOrderAssociation doa : doaList){
+            doa.setOrder(order);
+        }
         orderRepository.save(order);
+
     }
 
     @Override

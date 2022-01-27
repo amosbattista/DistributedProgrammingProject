@@ -34,7 +34,7 @@ public class DishEntity implements Serializable {
     @JoinColumn(name="menuId")
     private MenuEntity menu;
 
-    @ManyToMany(mappedBy = "dishList")
-    List<OrderEntity> orderList;
+    @OneToMany(targetEntity=DishOrderAssociation.class,cascade = CascadeType.MERGE , fetch = FetchType.LAZY, mappedBy = "dish")
+    private List<DishOrderAssociation> dishOrderAssociations;
 
 }
