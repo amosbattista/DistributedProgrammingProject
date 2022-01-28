@@ -3,8 +3,12 @@ package com.example.deliveryAppServer.service.impl;
 import com.example.deliveryAppServer.exception.InsufficientBalanceException;
 import com.example.deliveryAppServer.exception.UserAlreadyExists;
 import com.example.deliveryAppServer.exception.UserNotFound;
+import com.example.deliveryAppServer.model.order.DishEntity;
+import com.example.deliveryAppServer.model.order.MenuEntity;
+import com.example.deliveryAppServer.model.user.CustomerEntity;
 import com.example.deliveryAppServer.model.user.ProviderEntity;
 import com.example.deliveryAppServer.repository.CustomerRepository;
+import com.example.deliveryAppServer.repository.MenuRepository;
 import com.example.deliveryAppServer.repository.ProviderRepository;
 import com.example.deliveryAppServer.service.CustomerService;
 import com.example.deliveryAppServer.service.ProviderService;
@@ -20,6 +24,8 @@ import java.util.NoSuchElementException;
 public class ProviderServiceImpl extends PersonServiceImpl implements ProviderService {
     @Autowired
     private ProviderRepository providerRepository;
+    @Autowired
+    private MenuRepository menuRepository;
 
     @Autowired
     ProviderServiceImpl(ProviderRepository providerRepository){
@@ -43,22 +49,33 @@ public class ProviderServiceImpl extends PersonServiceImpl implements ProviderSe
     }
 
     @Override
-    public void updateProvider(ProviderEntity provider) {
-        if(!providerRepository.existsById(provider.getId())){
+    public void updateProvider(ProviderEntity newProvider) {
+        if(newProvider.getId()==null ||!providerRepository.existsById(newProvider.getId())){
             throw new UserNotFound();
         }
 
-        if(providerRepository.existsByUsernameExceptMyself(provider.getId(),provider.getUsername())){
-            throw new UserAlreadyExists("Username "+provider.getUsername()+" not available");
+        ProviderEntity prevProvider = providerRepository.getById(newProvider.getId());
+
+        if(providerRepository.existsByUsernameExceptMyself(newProvider.getId(),newProvider.getUsername())){
+            throw new UserAlreadyExists("Username "+newProvider.getUsername()+" not available");
         }
 
-        if(providerRepository.existsByTelephoneNumberExceptMyself(provider.getId(), provider.getTelephoneNumber())){
-            throw new UserAlreadyExists("Telephone Number "+provider.getTelephoneNumber()+" not available");
+        if(providerRepository.existsByTelephoneNumberExceptMyself(newProvider.getId(), newProvider.getTelephoneNumber())){
+            throw new UserAlreadyExists("Telephone Number "+newProvider.getTelephoneNumber()+" not available");
         }
 
+        newProvider.setBalance(prevProvider.getBalance());
 
-        providerRepository.save(provider);
-        log.info("[SERVICE]"+provider.getUsername()+" successfully updated!");
+        if(newProvider.getPassword()==null || newProvider.getPassword().isBlank())
+            newProvider.setPassword(prevProvider.getPassword());
+
+        if(newProvider.getMenu()==null)
+            newProvider.setMenu(prevProvider.getMenu());
+
+
+
+        providerRepository.save(newProvider);
+        log.info("[SERVICE]"+newProvider.getUsername()+" successfully updated!");
 
     }
 
@@ -66,6 +83,40 @@ public class ProviderServiceImpl extends PersonServiceImpl implements ProviderSe
     @Override
     public List<ProviderEntity> getAvailableProviders() {
         return providerRepository.findAllByIsAvailable(true);
+    }
+
+    @Override
+    public void setAvailability(Boolean avail, Long id) {
+        ProviderEntity prevProvider = providerRepository.getById(id);
+        prevProvider.setIsAvailable(avail);
+        log.info("[SERVICE]"+"availability set to: "+avail);
+        providerRepository.save(prevProvider);
+    }
+
+    @Override
+    public void createNewMenu(MenuEntity newMenu) {
+
+
+        MenuEntity savedMenu = menuRepository.save(newMenu);
+
+        for (DishEntity dish: savedMenu.getDishEntities())
+            dish.setMenu(savedMenu);
+
+
+        menuRepository.save(savedMenu);
+
+        ProviderEntity provider = providerRepository.getById(newMenu.getProvider().getId());
+        provider.setMenu(savedMenu);
+        providerRepository.save(provider);
+        log.info("[SERVICE] created new menu for provider: "+savedMenu.getProvider().getId());
+    }
+
+    @Override
+    public MenuEntity getMenu(Long providerId) {
+        ProviderEntity prov = providerRepository.getById(providerId);
+        MenuEntity menu = prov.getMenu();
+        log.info("[SERVICE] get menu for provider: "+providerId);
+        return menu;
     }
 
 }

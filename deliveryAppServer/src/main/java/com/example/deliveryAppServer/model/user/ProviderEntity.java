@@ -37,7 +37,7 @@ public class ProviderEntity extends PersonEntity implements Serializable {
     @NotNull
     private Boolean hasOwnRiders;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "menu_id", referencedColumnName = "id")
     private MenuEntity menu;
 

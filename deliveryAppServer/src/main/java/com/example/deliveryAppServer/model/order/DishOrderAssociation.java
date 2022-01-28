@@ -1,6 +1,7 @@
 package com.example.deliveryAppServer.model.order;
 
 import com.example.deliveryAppServer.model.user.ProviderEntity;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,6 +22,7 @@ public class DishOrderAssociation implements Serializable {
     @JoinColumn(name="dishId")
     private DishEntity dish;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Id
     @ManyToOne(targetEntity= OrderEntity.class, fetch = FetchType.LAZY)
     @JoinColumn(name="orderId")

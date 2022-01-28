@@ -1,6 +1,7 @@
 package com.example.deliveryAppServer.controller;
 
 import com.example.deliveryAppServer.model.order.DishOrderAssociation;
+import com.example.deliveryAppServer.model.order.MenuEntity;
 import com.example.deliveryAppServer.model.order.OrderEntity;
 import com.example.deliveryAppServer.model.user.CustomerEntity;
 import com.example.deliveryAppServer.model.user.ProviderEntity;
@@ -17,6 +18,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+
+import static com.example.deliveryAppServer.model.enumerations.OrderState.COMPLETED;
+import static com.example.deliveryAppServer.model.enumerations.OrderState.REFUSED;
 
 @RestController
 @RequestMapping("/api/customer")
@@ -49,7 +53,14 @@ public class CustomerController {
 
     }
 
-    @GetMapping("order/{order-id}")
+    @GetMapping("/current-order/{customer-id}")
+    public OrderEntity getCurrentOrder(@PathVariable("customer-id") Long customerId){
+        log.info("[REST Controller] Get current order for customer: "+customerId);
+        OrderEntity order = orderService.getCurrentOrder(customerId);
+        return order;
+    }
+
+    @GetMapping("/order/{order-id}")
     public OrderEntity getOrderState(@PathVariable("order-id") Long orderId){
         log.info("[REST Controller] Get order state, id=: "+orderId);
         OrderEntity order = orderService.getOrderState(orderId);
@@ -78,6 +89,8 @@ public class CustomerController {
 
 
     }
+
+
 
     @PostMapping("/login")
     @ResponseStatus(code = HttpStatus.OK)

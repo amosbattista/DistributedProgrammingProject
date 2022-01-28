@@ -1,6 +1,7 @@
 package com.example.deliveryAppServer.controller;
 
 import com.example.deliveryAppServer.model.enumerations.OrderState;
+import com.example.deliveryAppServer.model.order.MenuEntity;
 import com.example.deliveryAppServer.model.order.OrderEntity;
 import com.example.deliveryAppServer.model.user.CustomerEntity;
 import com.example.deliveryAppServer.model.user.ProviderEntity;
@@ -47,6 +48,14 @@ public class ProviderController {
         return providerService.getAvailableProviders();
     }
 
+
+    @PostMapping("/")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void login(@RequestParam(name = "availability") Boolean avail, @RequestParam(name = "id") Long id){
+        providerService.setAvailability(avail,id);
+
+        log.info("[REST Controller] Login provider");
+    }
 
 
     @PostMapping("/login")
@@ -126,6 +135,22 @@ public class ProviderController {
     public void semiAcceptedOrder(@RequestBody Long orderId){
         log.info("[REST Controller] Put accept order");
         orderService.changeOrderState(orderId, OrderState.SEMI_ACCEPTED);
+    }
+
+    @PostMapping("/postMenu")
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public void postNewOrder(@Valid @RequestBody MenuEntity menu){
+        log.info("[REST Controller] Post menu");
+        providerService.createNewMenu(menu);
+
+
+    }
+
+    @GetMapping("/getMenu/{provider-id}")
+    @ResponseStatus(code = HttpStatus.OK)
+    public MenuEntity getMenu(@PathVariable("provider-id") Long providerId){
+        log.info("[REST Controller] Get Menu for provider: "+providerId);
+        return providerService.getMenu(providerId);
     }
 
 

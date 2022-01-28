@@ -1,16 +1,17 @@
 package com.example.deliveryAppServer.service.impl;
 
 import com.example.deliveryAppServer.OrderStateGraph.OrderStateGraph;
-import com.example.deliveryAppServer.exception.IllegalOrderState;
-import com.example.deliveryAppServer.exception.IllegalOrderType;
-import com.example.deliveryAppServer.exception.OrderNotFound;
+import com.example.deliveryAppServer.exception.*;
 import com.example.deliveryAppServer.model.enumerations.OrderState;
 import com.example.deliveryAppServer.model.enumerations.OrderType;
 import com.example.deliveryAppServer.model.order.DishOrderAssociation;
 import com.example.deliveryAppServer.model.order.OrderEntity;
 import com.example.deliveryAppServer.repository.DishOrderAssociationRepository;
+import com.example.deliveryAppServer.repository.DishRepository;
 import com.example.deliveryAppServer.repository.OrderRepository;
+import com.example.deliveryAppServer.service.CustomerService;
 import com.example.deliveryAppServer.service.OrderService;
+import com.example.deliveryAppServer.service.PersonService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import static com.example.deliveryAppServer.model.enumerations.OrderState.PENDING;
+import static com.example.deliveryAppServer.model.enumerations.OrderState.*;
 
 @Service
 @Slf4j
@@ -27,10 +28,22 @@ public class OrderServiceImpl implements OrderService{
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private DishRepository dishRepository;
+
+    @Autowired
+    private CustomerService customerService;
+
     private OrderStateGraph orderStateGraph;
 
     @Override
     public void createNewOrder(OrderEntity order) {
+
+
+        if(orderRepository.existsByCustomerIdAndOrderStateNotIn(order.getCustomer().getId(), List.of(COMPLETED, REFUSED))){
+            throw new OrderAlreadyInProgress();
+        }
+
         order.setOrderState(PENDING);
         order = orderRepository.save(order);
 
@@ -38,15 +51,21 @@ public class OrderServiceImpl implements OrderService{
         Double total = 0.0;
         for(DishOrderAssociation doa : doaList){
             doa.setOrder(order);
-            total+=doa.getDish().getPrice();
+            total+=dishRepository.findById(doa.getDish().getId()).get().getPrice() * doa.getQuantity();
         }
-
-
 
         order.setPrice(total);
 
+        try{
+            customerService.updateBalance(-total, order.getCustomer().getId());
+        }
+        catch(InsufficientBalanceException ex){
+            order.setOrderState(REFUSED);
+            orderRepository.save(order);
+            throw new InsufficientBalanceException("Order REFUSED for insufficient balance");
+        }
 
-        orderRepository.save(order);
+
 
     }
 
@@ -110,5 +129,9 @@ public class OrderServiceImpl implements OrderService{
         order.setOrderType(orderType);
         orderRepository.save(order);
 
+    }
+
+    public OrderEntity getCurrentOrder(Long customerId){
+        return orderRepository.findByCustomerIdAndOrderStateNotIn(customerId, List.of(COMPLETED, REFUSED));
     }
 }

@@ -12,5 +12,7 @@ public interface OrderRepository extends JpaRepository<OrderEntity,Long> {
     List<OrderEntity> findAllByOrderState(OrderState orderState);
     List<OrderEntity> findAllByCustomerId(Long customerId);
     List<OrderEntity> findAllByProviderIdAndOrderState(Long providerId, OrderState orderState);
+    OrderEntity findByCustomerIdAndOrderStateNotIn(Long customerId, List<OrderState> orderStateList);
+    Boolean existsByCustomerIdAndOrderStateNotIn(Long customerId, List<OrderState> orderStateList);
 
 }
