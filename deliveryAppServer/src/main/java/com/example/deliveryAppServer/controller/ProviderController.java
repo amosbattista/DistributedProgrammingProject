@@ -1,6 +1,9 @@
 package com.example.deliveryAppServer.controller;
 
+import com.example.deliveryAppServer.exception.OrderNotFound;
 import com.example.deliveryAppServer.model.enumerations.OrderState;
+import com.example.deliveryAppServer.model.enumerations.OrderType;
+import com.example.deliveryAppServer.model.order.DishEntity;
 import com.example.deliveryAppServer.model.order.MenuEntity;
 import com.example.deliveryAppServer.model.order.OrderEntity;
 import com.example.deliveryAppServer.model.user.CustomerEntity;
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/provider")
@@ -41,6 +45,7 @@ public class ProviderController {
         log.info("[REST Controller] Put provider");
         providerService.updateProvider(provider);
     }
+
     @GetMapping("/getAvalaibleProviders")
     @ResponseStatus(code = HttpStatus.OK)
     public List<ProviderEntity> getAvailaibleProvider(){
@@ -67,75 +72,124 @@ public class ProviderController {
         return providerService.login(username, password);
     }
 
-    @GetMapping("/getPendingOrders")
+    @GetMapping("/getPendingOrders/{provider-id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<OrderEntity> getPendingOrders(Long providerId){
+    public List<OrderEntity> getPendingOrders(@PathVariable("provider-id")  Long providerId){
         log.info("[REST Controller] Get Pending Orders");
         return orderService.getProviderOrdersByState(providerId, OrderState.PENDING);
     }
 
-    @GetMapping("/getAcceptedOrders")
+    @GetMapping("/getAcceptedOrders/{provider-id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<OrderEntity> getAcceptedOrders(Long providerId){
+    public List<OrderEntity> getAcceptedOrders(@PathVariable("provider-id")  Long providerId){
         log.info("[REST Controller] Get Accepted Orders");
         return orderService.getProviderOrdersByState(providerId, OrderState.ACCEPTED);
     }
 
-    @GetMapping("/getSemiAcceptedOrders")
+    @GetMapping("/getSemiAcceptedOrders/{provider-id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<OrderEntity> getSemiAcceptedOrders(Long providerId){
+    public List<OrderEntity> getSemiAcceptedOrders(@PathVariable("provider-id")  Long providerId){
         log.info("[REST Controller] Get SemiAccepted Orders");
         return orderService.getProviderOrdersByState(providerId, OrderState.SEMI_ACCEPTED);
     }
 
-    @GetMapping("/getShippedOrders")
+    @GetMapping("/getShippedOrders/{provider-id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<OrderEntity> getShippedOrders(Long providerId){
+    public List<OrderEntity> getShippedOrders(@PathVariable("provider-id")  Long providerId){
         log.info("[REST Controller] Get Shipped Orders");
         return orderService.getProviderOrdersByState(providerId, OrderState.SHIPPED);
     }
 
-    @GetMapping("/getCompletedOrders")
+    @GetMapping("/getCompletedOrders/{provider-id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<OrderEntity> getCompletedOrders(Long providerId){
+    public List<OrderEntity> getCompletedOrders(@PathVariable("provider-id")  Long providerId){
         log.info("[REST Controller] Get Completed Orders");
         return orderService.getProviderOrdersByState(providerId, OrderState.COMPLETED);
     }
 
-    @PutMapping("/putAcceptOrder")
+    @PutMapping("/putTakeAwayOrder") //PER TAKE-AWAY o SPEDIZIONE con i miei fattorini
     @ResponseStatus(code = HttpStatus.OK)
-    public void acceptOrder(@RequestBody Long orderId){
+    public void acceptTakeAwayOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put accept order");
+        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.TAKE_AWAY)){
+            throw new OrderNotFound("Wrong order type!");
+        }
         orderService.changeOrderState(orderId, OrderState.ACCEPTED);
     }
 
-    @PutMapping("/putRefuseOrder")
+    @PutMapping("/putNoRiderDeliveringOrder") //SPEDIZIONE con i miei fattorini
     @ResponseStatus(code = HttpStatus.OK)
-    public void refuseOrder(@RequestBody Long orderId){
+    public void acceptNoRiderOrder(@RequestParam(name = "id") Long orderId){
+        log.info("[REST Controller] Put accept order");
+        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY)){
+            throw new OrderNotFound("Wrong order type!");
+        }
+
+        orderService.changeOrderType(orderId, OrderType.DELIVERY_NORIDER);
+        orderService.changeOrderState(orderId, OrderState.ACCEPTED);
+    }
+
+
+    @PutMapping("/putRiderOrder") //SOLO PER RIDERS
+    @ResponseStatus(code = HttpStatus.OK)
+    public void semiAcceptedOrder(@RequestParam(name = "id") Long orderId){
+        log.info("[REST Controller] Put accept order");
+        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY)){
+            throw new OrderNotFound("Wrong order type!");
+        }
+
+        orderService.changeOrderType(orderId, OrderType.DELIVERY_RIDERS);
+        orderService.changeOrderState(orderId, OrderState.SEMI_ACCEPTED);
+    }
+
+    @PutMapping("/refuseTakeAway")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void refuseTaWOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put refuse order");
+        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.TAKE_AWAY)){
+            throw new OrderNotFound("Wrong order type!");
+        }
+
+        orderService.changeOrderState(orderId, OrderState.REFUSED);
+    }
+
+    @PutMapping("/refuseNoRider")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void refuseNoRiderOrder(@RequestParam(name = "id") Long orderId){
+        log.info("[REST Controller] Put refuse order");
+        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY)){
+            throw new OrderNotFound("Wrong order type!");
+        }
+        orderService.changeOrderType(orderId, OrderType.DELIVERY_NORIDER);
+        orderService.changeOrderState(orderId, OrderState.REFUSED);
+    }
+
+    @PutMapping("/refuseRider")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void refuseRiderOrder(@RequestParam(name = "id") Long orderId){
+        log.info("[REST Controller] Put refuse order");
+        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY)){
+            throw new OrderNotFound("Wrong order type!");
+        }
+        orderService.changeOrderType(orderId, OrderType.DELIVERY_RIDERS);
         orderService.changeOrderState(orderId, OrderState.REFUSED);
     }
 
     @PutMapping("/putHandOrder")
     @ResponseStatus(code = HttpStatus.OK)
-    public void handOrder(@RequestBody Long orderId){
+    public void handOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put completed order");
         orderService.changeOrderState(orderId, OrderState.COMPLETED);
     }
 
     @PutMapping("/putShipOrder")
     @ResponseStatus(code = HttpStatus.OK)
-    public void shipOrder(@RequestBody Long orderId){
+    public void shipOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put accept order");
         orderService.changeOrderState(orderId, OrderState.SHIPPED);
     }
 
-    @PutMapping("/SemiAcceptedOrder")
-    @ResponseStatus(code = HttpStatus.OK)
-    public void semiAcceptedOrder(@RequestBody Long orderId){
-        log.info("[REST Controller] Put accept order");
-        orderService.changeOrderState(orderId, OrderState.SEMI_ACCEPTED);
-    }
+
 
     @PostMapping("/postMenu")
     @ResponseStatus(code = HttpStatus.CREATED)
@@ -151,6 +205,13 @@ public class ProviderController {
     public MenuEntity getMenu(@PathVariable("provider-id") Long providerId){
         log.info("[REST Controller] Get Menu for provider: "+providerId);
         return providerService.getMenu(providerId);
+    }
+
+    @PostMapping("/addDish/{provider-id}")
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public DishEntity addDish(@PathVariable("provider-id") Long providerId, @Valid @RequestBody DishEntity dish){
+        log.info("[REST Controller] Add Dish for provider: "+providerId);
+        return providerService.addDish(dish, providerId);
     }
 
 

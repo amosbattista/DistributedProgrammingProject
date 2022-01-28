@@ -3,6 +3,8 @@ package com.example.deliveryAppServer.model.order;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -13,7 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "dish")
-@Data
+@Getter
+@Setter
 @EntityListeners(AuditingEntityListener.class) //Non necessario
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class DishEntity implements Serializable {

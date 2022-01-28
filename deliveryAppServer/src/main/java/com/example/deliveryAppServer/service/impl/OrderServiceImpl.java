@@ -60,9 +60,21 @@ public class OrderServiceImpl implements OrderService{
             customerService.updateBalance(-total, order.getCustomer().getId());
         }
         catch(InsufficientBalanceException ex){
-            order.setOrderState(REFUSED);
-            orderRepository.save(order);
+            //order.setOrderState(REFUSED);
+           // orderRepository.save(order);
+
+            orderRepository.delete(order);
             throw new InsufficientBalanceException("Order REFUSED for insufficient balance");
+        }
+
+        try{
+            orderRepository.save(order);
+        }
+        catch (Exception ex){
+            orderRepository.deleteById(order.getId());
+            customerService.updateBalance(total, order.getCustomer().getId());
+            throw new ServerError("Order REFUSED");
+
         }
 
 
@@ -123,7 +135,7 @@ public class OrderServiceImpl implements OrderService{
         }catch (NoSuchElementException ex){
             throw new OrderNotFound();
         }
-        if(!(order.getOrderType().equals(OrderType.DELIVERY) && (orderType.equals(OrderType.DELIVERY_NORIDER) || orderType.equals(OrderType.DELIVERY_RIDERS))))
+        if(!(order.getOrderState().equals(PENDING) && order.getOrderType().equals(OrderType.DELIVERY) && (orderType.equals(OrderType.DELIVERY_NORIDER) || orderType.equals(OrderType.DELIVERY_RIDERS))))
             throw new IllegalOrderType();
 
         order.setOrderType(orderType);
@@ -132,6 +144,12 @@ public class OrderServiceImpl implements OrderService{
     }
 
     public OrderEntity getCurrentOrder(Long customerId){
-        return orderRepository.findByCustomerIdAndOrderStateNotIn(customerId, List.of(COMPLETED, REFUSED));
+        OrderEntity order = orderRepository.findByCustomerIdAndOrderStateNotIn(customerId, List.of(COMPLETED, REFUSED));
+        if(order == null){
+            throw new OrderNotFound("No current order found");
+        }
+
+
+        return order;
     }
 }

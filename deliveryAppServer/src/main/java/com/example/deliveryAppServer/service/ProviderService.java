@@ -1,5 +1,6 @@
 package com.example.deliveryAppServer.service;
 
+import com.example.deliveryAppServer.model.order.DishEntity;
 import com.example.deliveryAppServer.model.order.MenuEntity;
 import com.example.deliveryAppServer.model.user.ProviderEntity;
 
@@ -16,4 +17,6 @@ public interface ProviderService extends PersonService {
 
 
     MenuEntity getMenu(Long providerId);
+
+    DishEntity addDish(DishEntity dish,Long providerId);
 }

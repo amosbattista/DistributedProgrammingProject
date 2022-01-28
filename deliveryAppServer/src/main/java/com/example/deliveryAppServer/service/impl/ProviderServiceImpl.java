@@ -8,6 +8,7 @@ import com.example.deliveryAppServer.model.order.MenuEntity;
 import com.example.deliveryAppServer.model.user.CustomerEntity;
 import com.example.deliveryAppServer.model.user.ProviderEntity;
 import com.example.deliveryAppServer.repository.CustomerRepository;
+import com.example.deliveryAppServer.repository.DishRepository;
 import com.example.deliveryAppServer.repository.MenuRepository;
 import com.example.deliveryAppServer.repository.ProviderRepository;
 import com.example.deliveryAppServer.service.CustomerService;
@@ -26,6 +27,9 @@ public class ProviderServiceImpl extends PersonServiceImpl implements ProviderSe
     private ProviderRepository providerRepository;
     @Autowired
     private MenuRepository menuRepository;
+
+    @Autowired
+    private DishRepository dishRepository;
 
     @Autowired
     ProviderServiceImpl(ProviderRepository providerRepository){
@@ -102,7 +106,6 @@ public class ProviderServiceImpl extends PersonServiceImpl implements ProviderSe
         for (DishEntity dish: savedMenu.getDishEntities())
             dish.setMenu(savedMenu);
 
-
         menuRepository.save(savedMenu);
 
         ProviderEntity provider = providerRepository.getById(newMenu.getProvider().getId());
@@ -115,8 +118,27 @@ public class ProviderServiceImpl extends PersonServiceImpl implements ProviderSe
     public MenuEntity getMenu(Long providerId) {
         ProviderEntity prov = providerRepository.getById(providerId);
         MenuEntity menu = prov.getMenu();
+
+        if(menu == null){
+            menu = new MenuEntity();
+            menu.setProvider(prov);
+            prov.setMenu(menuRepository.save(menu));
+            providerRepository.save(prov);
+        }
+
         log.info("[SERVICE] get menu for provider: "+providerId);
         return menu;
+    }
+
+    @Override
+    public DishEntity addDish(DishEntity dish, Long providerId) {
+        ProviderEntity prov = providerRepository.getById(providerId);
+        MenuEntity menu = prov.getMenu();
+
+        dish.setMenu(menu);
+
+        return dishRepository.save(dish);
+
     }
 
 }
