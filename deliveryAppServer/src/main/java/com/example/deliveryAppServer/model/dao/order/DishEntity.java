@@ -38,32 +38,12 @@ public class DishEntity implements Serializable {
     private double price;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @ManyToOne(targetEntity=MenuEntity.class, fetch = FetchType.LAZY)
-    @JoinColumn(name="menuId")
+    @ManyToOne(targetEntity = MenuEntity.class, fetch = FetchType.LAZY)
+    @JoinColumn(name = "menuId")
     private MenuEntity menu;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(targetEntity=DishOrderAssociation.class,cascade = CascadeType.MERGE , fetch = FetchType.LAZY, mappedBy = "dish")
+    @OneToMany(targetEntity = DishOrderAssociation.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY, mappedBy = "dish")
     private List<DishOrderAssociation> dishOrderAssociations;
 
-    public DishEntity(Long dishId) {
-        this.id=dishId;
-    }
-
-    public DishEntity() {
-
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        DishEntity that = (DishEntity) o;
-        return id.equals(that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
 }
