@@ -1,6 +1,9 @@
 package com.example.deliveryAppServer.controller;
 
 import com.example.deliveryAppServer.exception.OrderNotFound;
+import com.example.deliveryAppServer.exception.UserNotFound;
+import com.example.deliveryAppServer.mapper.ModelMapperDto;
+import com.example.deliveryAppServer.model.dto.order.OrderDto;
 import com.example.deliveryAppServer.model.enumerations.OrderState;
 import com.example.deliveryAppServer.model.enumerations.OrderType;
 import com.example.deliveryAppServer.model.dao.order.DishEntity;
@@ -29,21 +32,39 @@ public class ProviderController {
     @Autowired
     private ProviderService providerService;
 
+    @Autowired
+    private ModelMapperDto modelMapper;
+
+    @GetMapping("/{provider-id}/myinfo")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ProviderEntity getMyInfo(@PathVariable("provider-id") Long providerId){
+        log.info("[REST Controller] Get provider info for id: "+providerId);
+
+            try{
+               return (ProviderEntity) providerService.getPerson(providerId);
+                }
+            catch (ClassCastException exception){
+                throw new UserNotFound();
+             }
+
+    }
+
+
     @PostMapping("/postProvider")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void createNewProvider(@Valid @RequestBody ProviderEntity provider){
+    public ProviderEntity createNewProvider(@Valid @RequestBody ProviderEntity provider){
         log.info("[REST Controller] Post new provider");
-        providerService.createNewProvider(provider);
+        return providerService.createNewProvider(provider);
     }
 
     @PutMapping("/putProvider")
     @ResponseStatus(code = HttpStatus.OK)
-    public void putProvider(@Valid @RequestBody ProviderEntity provider){
+    public ProviderEntity putProvider(@Valid @RequestBody ProviderEntity provider){
         log.info("[REST Controller] Put provider");
-        providerService.updateProvider(provider);
+        return providerService.updateProvider(provider);
     }
 
-    @GetMapping("/getAvalaibleProviders")
+    @GetMapping("/getAvalaibleProviders") // serve??
     @ResponseStatus(code = HttpStatus.OK)
     public List<ProviderEntity> getAvailaibleProvider(){
         log.info("[REST Controller] Get Available provider");
@@ -51,10 +72,10 @@ public class ProviderController {
     }
 
 
-    @PostMapping("/")
+    @PostMapping("/{provider-id}")
     @ResponseStatus(code = HttpStatus.OK)
-    public void login(@RequestParam(name = "availability") Boolean avail, @RequestParam(name = "id") Long id){
-        providerService.setAvailability(avail,id);
+    public void setAvail(@RequestParam(name = "availability") Boolean avail, @PathVariable("provider-id") Long providerId){
+        providerService.setAvailability(avail,providerId);
 
         log.info("[REST Controller] Login provider");
     }
@@ -69,39 +90,45 @@ public class ProviderController {
         return providerService.login(username, password);
     }
 
-    @GetMapping("/getPendingOrders/{provider-id}")
+    @GetMapping("/{provider-id}/getPendingOrders")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<OrderEntity> getPendingOrders(@PathVariable("provider-id")  Long providerId){
+    public List<OrderDto> getPendingOrders(@PathVariable("provider-id")  Long providerId){
         log.info("[REST Controller] Get Pending Orders");
-        return orderService.getProviderOrdersByState(providerId, OrderState.PENDING);
+        List<OrderEntity> orderEntityList = orderService.getProviderOrdersByState(providerId, OrderState.PENDING);
+        return modelMapper.convertOrderListToDto(orderEntityList);
     }
 
-    @GetMapping("/getAcceptedOrders/{provider-id}")
+    @GetMapping("/{provider-id}/getAcceptedOrders")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<OrderEntity> getAcceptedOrders(@PathVariable("provider-id")  Long providerId){
+    public List<OrderDto> getAcceptedOrders(@PathVariable("provider-id")  Long providerId){
         log.info("[REST Controller] Get Accepted Orders");
-        return orderService.getProviderOrdersByState(providerId, OrderState.ACCEPTED);
+        List<OrderEntity> orderEntityList = orderService.getProviderOrdersByState(providerId, OrderState.ACCEPTED);
+        return modelMapper.convertOrderListToDto(orderEntityList);
     }
 
-    @GetMapping("/getSemiAcceptedOrders/{provider-id}")
+    @GetMapping("/{provider-id}/getSemiAcceptedOrders")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<OrderEntity> getSemiAcceptedOrders(@PathVariable("provider-id")  Long providerId){
+    public List<OrderDto> getSemiAcceptedOrders(@PathVariable("provider-id")  Long providerId){
         log.info("[REST Controller] Get SemiAccepted Orders");
-        return orderService.getProviderOrdersByState(providerId, OrderState.SEMI_ACCEPTED);
+        List<OrderEntity> orderEntityList = orderService.getProviderOrdersByState(providerId, OrderState.SEMI_ACCEPTED);
+        return modelMapper.convertOrderListToDto(orderEntityList);
     }
 
-    @GetMapping("/getShippedOrders/{provider-id}")
+    @GetMapping("/{provider-id}/getShippedOrders")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<OrderEntity> getShippedOrders(@PathVariable("provider-id")  Long providerId){
+    public List<OrderDto> getShippedOrders(@PathVariable("provider-id")  Long providerId){
         log.info("[REST Controller] Get Shipped Orders");
-        return orderService.getProviderOrdersByState(providerId, OrderState.SHIPPED);
+        List<OrderEntity> orderEntityList = orderService.getProviderOrdersByState(providerId, OrderState.SHIPPED);
+        return modelMapper.convertOrderListToDto(orderEntityList);
     }
 
-    @GetMapping("/getCompletedOrders/{provider-id}")
+    @GetMapping("/{provider-id}/getCompletedOrders")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<OrderEntity> getCompletedOrders(@PathVariable("provider-id")  Long providerId){
+    public List<OrderDto> getCompletedOrders(@PathVariable("provider-id")  Long providerId){
         log.info("[REST Controller] Get Completed Orders");
-        return orderService.getProviderOrdersByState(providerId, OrderState.COMPLETED);
+        List<OrderEntity> orderEntityList = orderService.getProviderOrdersByState(providerId, OrderState.COMPLETED);
+        return modelMapper.convertOrderListToDto(orderEntityList);
+
     }
 
     @PutMapping("/putTakeAwayOrder") //PER TAKE-AWAY o SPEDIZIONE con i miei fattorini
@@ -206,25 +233,33 @@ public class ProviderController {
 
     @PostMapping("/postMenu")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void postNewOrder(@Valid @RequestBody MenuEntity menu){
+    public void postNewMenu(@Valid @RequestBody MenuEntity menu){
         log.info("[REST Controller] Post menu");
         providerService.createNewMenu(menu);
 
 
     }
 
-    @GetMapping("/getMenu/{provider-id}")
+    @GetMapping("/{provider-id}/getMenu")
     @ResponseStatus(code = HttpStatus.OK)
     public MenuEntity getMenu(@PathVariable("provider-id") Long providerId){
         log.info("[REST Controller] Get Menu for provider: "+providerId);
         return providerService.getMenu(providerId);
     }
 
-    @PostMapping("/addDish/{provider-id}")
+    @PostMapping("/{provider-id}/addDish")
     @ResponseStatus(code = HttpStatus.CREATED)
     public DishEntity addDish(@PathVariable("provider-id") Long providerId, @Valid @RequestBody DishEntity dish){
         log.info("[REST Controller] Add Dish for provider: "+providerId);
         return providerService.addDish(dish, providerId);
+    }
+
+    @DeleteMapping("/{provider-id}/removeDish")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void removeDish(@PathVariable("provider-id") Long providerId, @RequestParam(name = "dish_id") Long dishId){
+
+        log.info("[REST Controller] Remove Dish for provider: "+providerId);
+        providerService.removeDish(dishId, providerId);
     }
 
 

@@ -7,7 +7,7 @@ import com.example.deliveryAppServer.model.dao.order.OrderEntity;
 import java.util.List;
 
 public interface OrderService {
-    public void createNewOrder(OrderEntity order);
+    public OrderEntity createNewOrder(OrderEntity order);
     public OrderEntity getOrderState(Long orderId);
     public List<OrderEntity> getOrdersByState(OrderState orderState);
     public List<OrderEntity> getCustomerOrdersHistory(Long customerId);

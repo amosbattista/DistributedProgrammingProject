@@ -1,6 +1,8 @@
 package com.example.deliveryAppServer.model.dao.user;
 
 import com.example.deliveryAppServer.model.dao.order.OrderEntity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,6 +17,7 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class) //Non necessario
 @DynamicUpdate
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class RiderEntity extends PersonEntity implements Serializable {
 
     @NotBlank
@@ -23,6 +26,7 @@ public class RiderEntity extends PersonEntity implements Serializable {
     @NotBlank
     private String vehicleType;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(targetEntity= OrderEntity.class,cascade = CascadeType.ALL , fetch = FetchType.LAZY, mappedBy = "rider")
     private List<OrderEntity> orders;
 

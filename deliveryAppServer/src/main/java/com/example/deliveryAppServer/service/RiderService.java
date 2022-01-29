@@ -4,7 +4,7 @@ import com.example.deliveryAppServer.model.dao.user.RiderEntity;
 
 public interface RiderService extends PersonService{
 
-    public void createNewRider(RiderEntity rider);
-    public void updateRider(RiderEntity rider);
+    public RiderEntity createNewRider(RiderEntity rider);
+    public RiderEntity updateRider(RiderEntity rider);
 
 }

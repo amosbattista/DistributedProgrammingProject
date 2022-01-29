@@ -32,7 +32,7 @@ public class ProviderServiceImpl extends PersonServiceImpl implements ProviderSe
     }
 
     @Override
-    public void createNewProvider(ProviderEntity provider) {
+    public ProviderEntity createNewProvider(ProviderEntity provider) {
         provider.setBalance(0);
         if(providerRepository.existsByUsername(provider.getUsername())){
             throw new UserAlreadyExists("Customer "+ provider.getUsername()+" already exists!");
@@ -43,12 +43,13 @@ public class ProviderServiceImpl extends PersonServiceImpl implements ProviderSe
         }
 
 
-        providerRepository.save(provider);
+        provider = providerRepository.save(provider);
         log.info("[SERVICE] New customer "+provider.getUsername()+" created!");
+        return provider;
     }
 
     @Override
-    public void updateProvider(ProviderEntity newProvider) {
+    public ProviderEntity updateProvider(ProviderEntity newProvider) {
         if(newProvider.getId()==null ||!providerRepository.existsById(newProvider.getId())){
             throw new UserNotFound();
         }
@@ -73,8 +74,9 @@ public class ProviderServiceImpl extends PersonServiceImpl implements ProviderSe
 
 
 
-        providerRepository.save(newProvider);
+        newProvider = providerRepository.save(newProvider);
         log.info("[SERVICE]"+newProvider.getUsername()+" successfully updated!");
+        return newProvider;
 
     }
 
@@ -135,6 +137,12 @@ public class ProviderServiceImpl extends PersonServiceImpl implements ProviderSe
         return dishRepository.save(dish);
 
     }
+
+    @Override
+    public void removeDish(Long dishId, Long providerId) {
+        dishRepository.deleteById(dishId);
+    }
+
 
 }
 

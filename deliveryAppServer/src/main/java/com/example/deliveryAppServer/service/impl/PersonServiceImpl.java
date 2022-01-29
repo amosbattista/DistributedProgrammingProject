@@ -2,6 +2,7 @@ package com.example.deliveryAppServer.service.impl;
 
 import com.example.deliveryAppServer.exception.InvalidCredentials;
 import com.example.deliveryAppServer.exception.UserNotFound;
+import com.example.deliveryAppServer.model.dao.user.CustomerEntity;
 import com.example.deliveryAppServer.model.dao.user.PersonEntity;
 import com.example.deliveryAppServer.repository.PersonRepository;
 import com.example.deliveryAppServer.service.PersonService;
@@ -51,6 +52,17 @@ public class PersonServiceImpl <Person extends PersonEntity, PersonId extends Lo
         user.updateBalance(valueIncrement);
         personRepository.save(user);
 
+
+    }
+
+    @Override
+    public PersonEntity getPerson(PersonId personId) {
+
+            if(!personRepository.existsById(personId)){
+                throw new UserNotFound();
+            }
+
+            return personRepository.findById(personId).get();
 
     }
 

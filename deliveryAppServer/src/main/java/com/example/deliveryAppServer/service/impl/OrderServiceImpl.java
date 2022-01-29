@@ -11,6 +11,7 @@ import com.example.deliveryAppServer.repository.OrderRepository;
 import com.example.deliveryAppServer.service.CustomerService;
 import com.example.deliveryAppServer.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,7 @@ public class OrderServiceImpl implements OrderService{
     private OrderStateGraph orderStateGraph;
 
     @Override
-    public void createNewOrder(OrderEntity order) {
+    public OrderEntity createNewOrder(OrderEntity order) {
 
 
         if(orderRepository.existsByCustomerIdAndOrderStateNotIn(order.getCustomer().getId(), List.of(COMPLETED, REFUSED))){
@@ -66,7 +67,7 @@ public class OrderServiceImpl implements OrderService{
         }
 
         try{
-            orderRepository.save(order);
+            order = orderRepository.save(order);
         }
         catch (Exception ex){
             orderRepository.deleteById(order.getId());
@@ -75,6 +76,7 @@ public class OrderServiceImpl implements OrderService{
 
         }
 
+        return order;
 
 
     }

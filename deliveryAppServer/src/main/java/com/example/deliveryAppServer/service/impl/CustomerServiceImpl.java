@@ -24,7 +24,7 @@ public class CustomerServiceImpl extends PersonServiceImpl implements CustomerSe
     }
 
     @Override
-    public void createNewCustomer(CustomerEntity customer) {
+    public CustomerEntity createNewCustomer(CustomerEntity customer) {
 
         if(customerRepository.existsByUsername(customer.getUsername())){
             throw new UserAlreadyExists("Customer "+ customer.getUsername()+" already exists!");
@@ -34,15 +34,16 @@ public class CustomerServiceImpl extends PersonServiceImpl implements CustomerSe
             throw new UserAlreadyExists("Customer tel. number "+ customer.getTelephoneNumber()+" already exists!");
         }
 
-        customerRepository.save(customer);
+        CustomerEntity cust = customerRepository.save(customer);
         log.info("[SERVICE] New customer "+customer.getUsername()+" created!");
+        return cust;
 
 
 
     }
 
     @Override
-    public void updateCustomer(CustomerEntity newCustomer) {
+    public CustomerEntity updateCustomer(CustomerEntity newCustomer) {
 
         if(newCustomer.getId()==null || !customerRepository.existsById(newCustomer.getId())){
             throw new UserNotFound();
@@ -64,8 +65,9 @@ public class CustomerServiceImpl extends PersonServiceImpl implements CustomerSe
             newCustomer.setPassword(prevCustomer.getPassword());
 
 
-        customerRepository.save(newCustomer);
+        CustomerEntity customer2 = customerRepository.save(newCustomer);
         log.info("[SERVICE]"+newCustomer.getUsername()+" successfully updated!");
+        return customer2;
 
 
 
@@ -73,7 +75,6 @@ public class CustomerServiceImpl extends PersonServiceImpl implements CustomerSe
       //
 
     }
-
 
 
 }

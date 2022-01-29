@@ -2,6 +2,7 @@ package com.example.deliveryAppServer.service.impl;
 
 import com.example.deliveryAppServer.exception.UserAlreadyExists;
 import com.example.deliveryAppServer.exception.UserNotFound;
+import com.example.deliveryAppServer.model.dao.user.ProviderEntity;
 import com.example.deliveryAppServer.model.dao.user.RiderEntity;
 import com.example.deliveryAppServer.repository.RiderRepository;
 import com.example.deliveryAppServer.service.RiderService;
@@ -22,7 +23,7 @@ public class RiderServiceImpl extends PersonServiceImpl implements RiderService 
     }
 
     @Override
-    public void createNewRider(RiderEntity rider){
+    public RiderEntity createNewRider(RiderEntity rider){
 
         if(riderRepository.existsByUsername(rider.getUsername())){
             throw new UserAlreadyExists("Rider " + rider.getUsername() + " already exists!");   //NON FUNZIONA CON ALTRE ENTITA'
@@ -32,12 +33,13 @@ public class RiderServiceImpl extends PersonServiceImpl implements RiderService 
             throw new UserAlreadyExists("Rider tel. number " + rider.getTelephoneNumber() + " already exists!"); //NON FUNZIONA CON ALTRE ENTITA'
         }
 
-        riderRepository.save(rider);
+        rider = riderRepository.save(rider);
         log.info("[SERVICE] New rider " + rider.getUsername() + " created!");
+        return rider;
     }
 
     @Override
-    public void updateRider(RiderEntity newRider){
+    public RiderEntity updateRider(RiderEntity newRider){
 
         if(newRider.getId()==null || !riderRepository.existsById(newRider.getId())){
             throw new UserNotFound();
@@ -60,8 +62,10 @@ public class RiderServiceImpl extends PersonServiceImpl implements RiderService 
             newRider.setPassword(prevRider.getPassword());
 
 
-        riderRepository.save(newRider);
+        newRider = riderRepository.save(newRider);
         log.info("[SERVICE]"+newRider.getUsername()+" successfully updated!");
+        return newRider;
     }
+
 
 }

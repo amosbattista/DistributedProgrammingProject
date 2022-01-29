@@ -1,8 +1,12 @@
 package com.example.deliveryAppServer.controller;
 
+import com.example.deliveryAppServer.exception.UserNotFound;
+import com.example.deliveryAppServer.mapper.ModelMapperDto;
 import com.example.deliveryAppServer.model.dao.order.OrderEntity;
 import com.example.deliveryAppServer.model.dao.user.CustomerEntity;
 import com.example.deliveryAppServer.model.dao.user.ProviderEntity;
+import com.example.deliveryAppServer.model.dto.order.OrderDto;
+import com.example.deliveryAppServer.model.dto.user.ProviderDto;
 import com.example.deliveryAppServer.service.CustomerService;
 import com.example.deliveryAppServer.service.OrderService;
 import com.example.deliveryAppServer.service.ProviderService;
@@ -29,57 +33,74 @@ public class CustomerController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private ModelMapperDto modelMapper;
 
+
+    @GetMapping("/{customer-id}/myinfo")
+    public CustomerEntity getMyInfo(@PathVariable("customer-id") Long customerId){
+        log.info("[REST Controller] Get customer info for id: "+customerId);
+
+        try{
+            return (CustomerEntity) customerService.getPerson(customerId);
+        }
+        catch (ClassCastException exception){
+            throw new UserNotFound();
+        }
+
+
+    }
 
     @GetMapping("/avail-providers")
-    public List<ProviderEntity> getAvailableProviders(){
+    public List<ProviderDto> getAvailableProvidersDTO(){
         log.info("[REST Controller] Get available providers");
         List<ProviderEntity> prov = providerService.getAvailableProviders();
-        return prov;
+
+        return modelMapper.convertProviderListToDto(prov);
     }
 
-    @GetMapping("/myorders/{customer-id}")
-    public List<OrderEntity> getOrderHistory(@PathVariable("customer-id") Long customerId){
+    @GetMapping("/{customer-id}/myorders")
+    public List<OrderDto> getOrderHistory(@PathVariable("customer-id") Long customerId){
         log.info("[REST Controller] Get order history for id: "+customerId);
         List<OrderEntity> orders = orderService.getCustomerOrdersHistory(customerId);
-        return orders;
+        return modelMapper.convertOrderListToDto(orders);
 
     }
 
-    @GetMapping("/current-order/{customer-id}")
-    public OrderEntity getCurrentOrder(@PathVariable("customer-id") Long customerId){
+    @GetMapping("/{customer-id}/current-order")
+    public OrderDto getCurrentOrderDTO(@PathVariable("customer-id") Long customerId){
         log.info("[REST Controller] Get current order for customer: "+customerId);
         OrderEntity order = orderService.getCurrentOrder(customerId);
-        return order;
+        return modelMapper.convertOrderToDtoForCustomer(order);
     }
 
-    @GetMapping("/order/{order-id}")
-    public OrderEntity getOrderState(@PathVariable("order-id") Long orderId){
+    @GetMapping("/order/{order-id}") // serve??
+    public OrderDto getOrderStateDTO(@PathVariable("order-id") Long orderId){
         log.info("[REST Controller] Get order state, id=: "+orderId);
         OrderEntity order = orderService.getOrderState(orderId);
-        return order;
+        return modelMapper.convertOrderToDtoForCustomer(order);
     }
 
     @PostMapping("/postCustomer")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void createNewCustomer(@Valid @RequestBody CustomerEntity customer){
+    public CustomerEntity createNewCustomer(@Valid @RequestBody CustomerEntity customer){
         log.info("[REST Controller] Post new customer");
-        customerService.createNewCustomer(customer);
+        return customerService.createNewCustomer(customer);
     }
 
     @PutMapping("/putCustomer")
     @ResponseStatus(code = HttpStatus.OK)
-    public void putCustomer(@Valid @RequestBody CustomerEntity customer){
+    public CustomerEntity putCustomer(@Valid @RequestBody CustomerEntity customer){
         log.info("[REST Controller] Put customer");
-        customerService.updateCustomer(customer);
+        return customerService.updateCustomer(customer);
     }
 
     @PostMapping("/postOrder")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void postNewOrder(@Valid @RequestBody  OrderEntity order){
+    public OrderDto postNewOrder(@Valid @RequestBody OrderEntity order){
         log.info("[REST Controller] Post order");
-        orderService.createNewOrder(order);
-
+        OrderEntity newOrder = orderService.createNewOrder(order);
+        return modelMapper.convertOrderToDtoForCustomer(newOrder);
 
     }
 
@@ -92,15 +113,13 @@ public class CustomerController {
         return customerService.login(username, password);
     }
 
-    @PutMapping("/balance")
+    @PutMapping("/{customer-id}/balance")
     @ResponseStatus(code = HttpStatus.OK)
-    public void increaseBalance(@RequestParam(name = "value") Double increment, @RequestParam(name = "id") Long id){
+    public void increaseBalance(@RequestParam(name = "value") Double increment, @PathVariable("customer-id") Long customerId){
         log.info("[REST Controller] Increase Customer Balance");
-        customerService.updateBalance(increment, id);
+        customerService.updateBalance(increment, customerId);
 
     }
-
-
 
 
 }

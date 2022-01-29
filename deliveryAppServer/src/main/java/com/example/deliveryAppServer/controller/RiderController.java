@@ -1,6 +1,10 @@
 package com.example.deliveryAppServer.controller;
 
 import com.example.deliveryAppServer.exception.OrderNotFound;
+import com.example.deliveryAppServer.exception.UserNotFound;
+import com.example.deliveryAppServer.mapper.ModelMapperDto;
+import com.example.deliveryAppServer.model.dao.user.ProviderEntity;
+import com.example.deliveryAppServer.model.dto.order.OrderDto;
 import com.example.deliveryAppServer.model.enumerations.OrderState;
 import com.example.deliveryAppServer.model.enumerations.OrderType;
 import com.example.deliveryAppServer.model.dao.order.OrderEntity;
@@ -27,11 +31,29 @@ public class RiderController {
     @Autowired
     private OrderService orderService;
 
+    @Autowired
+    private ModelMapperDto modelMapper;
+
+
+    @GetMapping("/{rider-id}/myinfo")
+    public RiderEntity getMyInfo(@PathVariable("rider-id") Long riderId){
+        log.info("[REST Controller] Get rider info for id: "+riderId);
+
+        try{
+            return (RiderEntity) riderService.getPerson(riderId);
+        }
+        catch (ClassCastException exception){
+            throw new UserNotFound();
+        }
+
+
+    }
+
     @PostMapping("/postRider")
     @ResponseStatus(code = HttpStatus.CREATED)
-    public void createNewRider(@Valid @RequestBody RiderEntity rider){
+    public RiderEntity createNewRider(@Valid @RequestBody RiderEntity rider){
         log.info("[REST Controller] Post new rider");
-        riderService.createNewRider(rider);
+        return riderService.createNewRider(rider);
     }
 
     @PostMapping("/login")
@@ -45,16 +67,17 @@ public class RiderController {
 
     @PutMapping("/updateRider")
     @ResponseStatus(code = HttpStatus.OK)
-    public void updateRider(@Valid @RequestBody RiderEntity rider){
+    public RiderEntity updateRider(@Valid @RequestBody RiderEntity rider){
         log.info("[REST Controller] Put rider");
-        riderService.updateRider(rider);
+        return riderService.updateRider(rider);
     }
 
     @GetMapping("/getSemiAcceptedOrders")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<OrderEntity> getSemiAcceptedOrders(){
+    public List<OrderDto> getSemiAcceptedOrders(){
         log.info("[REST Controller] Get semi accepted orders");
-        return orderService.getOrdersByState(OrderState.SEMI_ACCEPTED);
+        List<OrderEntity> orderEntityList = orderService.getOrdersByState(OrderState.SEMI_ACCEPTED);
+        return modelMapper.convertOrderListToDto(orderEntityList);
     }
 
     @PutMapping("/acceptOrder")
