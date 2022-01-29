@@ -1,4 +1,4 @@
-package com.example.deliveryAppServer.model.order;
+package com.example.deliveryAppServer.model.dao.order;
 
 
 import java.io.Serializable;

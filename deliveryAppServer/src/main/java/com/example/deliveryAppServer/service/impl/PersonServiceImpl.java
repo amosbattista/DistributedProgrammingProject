@@ -2,8 +2,7 @@ package com.example.deliveryAppServer.service.impl;
 
 import com.example.deliveryAppServer.exception.InvalidCredentials;
 import com.example.deliveryAppServer.exception.UserNotFound;
-import com.example.deliveryAppServer.model.user.PersonEntity;
-import com.example.deliveryAppServer.model.user.UserEntity;
+import com.example.deliveryAppServer.model.dao.user.PersonEntity;
 import com.example.deliveryAppServer.repository.PersonRepository;
 import com.example.deliveryAppServer.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;

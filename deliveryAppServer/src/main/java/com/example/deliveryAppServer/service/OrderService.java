@@ -2,7 +2,7 @@ package com.example.deliveryAppServer.service;
 
 import com.example.deliveryAppServer.model.enumerations.OrderState;
 import com.example.deliveryAppServer.model.enumerations.OrderType;
-import com.example.deliveryAppServer.model.order.OrderEntity;
+import com.example.deliveryAppServer.model.dao.order.OrderEntity;
 
 import java.util.List;
 

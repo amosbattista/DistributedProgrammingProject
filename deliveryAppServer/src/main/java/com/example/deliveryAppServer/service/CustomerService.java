@@ -1,7 +1,7 @@
 package com.example.deliveryAppServer.service;
 
 import com.example.deliveryAppServer.exception.UserAlreadyExists;
-import com.example.deliveryAppServer.model.user.CustomerEntity;
+import com.example.deliveryAppServer.model.dao.user.CustomerEntity;
 
 public interface CustomerService extends PersonService {
 

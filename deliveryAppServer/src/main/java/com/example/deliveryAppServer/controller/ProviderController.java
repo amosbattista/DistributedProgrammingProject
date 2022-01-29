@@ -3,15 +3,13 @@ package com.example.deliveryAppServer.controller;
 import com.example.deliveryAppServer.exception.OrderNotFound;
 import com.example.deliveryAppServer.model.enumerations.OrderState;
 import com.example.deliveryAppServer.model.enumerations.OrderType;
-import com.example.deliveryAppServer.model.order.DishEntity;
-import com.example.deliveryAppServer.model.order.MenuEntity;
-import com.example.deliveryAppServer.model.order.OrderEntity;
-import com.example.deliveryAppServer.model.user.CustomerEntity;
-import com.example.deliveryAppServer.model.user.ProviderEntity;
+import com.example.deliveryAppServer.model.dao.order.DishEntity;
+import com.example.deliveryAppServer.model.dao.order.MenuEntity;
+import com.example.deliveryAppServer.model.dao.order.OrderEntity;
+import com.example.deliveryAppServer.model.dao.user.ProviderEntity;
 import com.example.deliveryAppServer.service.OrderService;
 import com.example.deliveryAppServer.service.ProviderService;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.apache.bcel.classfile.Module;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/provider")
@@ -175,18 +172,34 @@ public class ProviderController {
         orderService.changeOrderState(orderId, OrderState.REFUSED);
     }
 
-    @PutMapping("/putHandOrder")
+    @PutMapping("/putCompletedHandOrder")
     @ResponseStatus(code = HttpStatus.OK)
-    public void handOrder(@RequestParam(name = "id") Long orderId){
+    public void completeHandOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put completed order");
+        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.TAKE_AWAY)){
+            throw new OrderNotFound("Wrong order type!");
+        }
         orderService.changeOrderState(orderId, OrderState.COMPLETED);
     }
 
     @PutMapping("/putShipOrder")
     @ResponseStatus(code = HttpStatus.OK)
-    public void shipOrder(@RequestParam(name = "id") Long orderId){
+    public void putOnShippedOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put accept order");
+        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY_NORIDER)){
+            throw new OrderNotFound("Wrong order type!");
+        }
         orderService.changeOrderState(orderId, OrderState.SHIPPED);
+    }
+
+    @PutMapping("/putCompletedOrder")
+    @ResponseStatus(code = HttpStatus.OK)
+    public void putCompletedOrder(@RequestParam(name = "id") Long orderId){
+        log.info("[REST Controller] Put accept order");
+        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY_NORIDER)){
+            throw new OrderNotFound("Wrong order type!");
+        }
+        orderService.changeOrderState(orderId, OrderState.COMPLETED);
     }
 
 

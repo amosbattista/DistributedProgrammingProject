@@ -1,17 +1,13 @@
 package com.example.deliveryAppServer.service.impl;
 
-import com.example.deliveryAppServer.exception.InsufficientBalanceException;
-import com.example.deliveryAppServer.exception.InvalidCredentials;
 import com.example.deliveryAppServer.exception.UserAlreadyExists;
 import com.example.deliveryAppServer.exception.UserNotFound;
-import com.example.deliveryAppServer.model.user.RiderEntity;
+import com.example.deliveryAppServer.model.dao.user.RiderEntity;
 import com.example.deliveryAppServer.repository.RiderRepository;
 import com.example.deliveryAppServer.service.RiderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
@@ -41,23 +37,31 @@ public class RiderServiceImpl extends PersonServiceImpl implements RiderService 
     }
 
     @Override
-    public void updateRider(RiderEntity rider){
+    public void updateRider(RiderEntity newRider){
 
-        if(!riderRepository.existsById(rider.getId())){
+        if(newRider.getId()==null || !riderRepository.existsById(newRider.getId())){
             throw new UserNotFound();
         }
 
-        if(riderRepository.existsByUsernameExceptMyself(rider.getId(), rider.getUsername())){
-            throw new UserAlreadyExists("Username " +rider.getUsername()+" not available");
+        RiderEntity prevRider = riderRepository.getById(newRider.getId());
+
+        if(riderRepository.existsByUsernameExceptMyself(newRider.getId(), newRider.getUsername())){
+            throw new UserAlreadyExists("Username " +newRider.getUsername()+" not available");
         }
 
-        if(riderRepository.existsByTelephoneNumberExceptMyself(rider.getId(), rider.getTelephoneNumber())){
-            throw new UserAlreadyExists("Telephone Number "+rider.getTelephoneNumber()+" not available");
+        if(riderRepository.existsByTelephoneNumberExceptMyself(newRider.getId(), newRider.getTelephoneNumber())){
+            throw new UserAlreadyExists("Telephone Number "+newRider.getTelephoneNumber()+" not available");
         }
 
 
-        riderRepository.save(rider);
-        log.info("[SERVICE]"+rider.getUsername()+" successfully updated!");
+        newRider.setBalance(prevRider.getBalance());
+
+        if(newRider.getPassword()==null || newRider.getPassword().isBlank())
+            newRider.setPassword(prevRider.getPassword());
+
+
+        riderRepository.save(newRider);
+        log.info("[SERVICE]"+newRider.getUsername()+" successfully updated!");
     }
 
 }

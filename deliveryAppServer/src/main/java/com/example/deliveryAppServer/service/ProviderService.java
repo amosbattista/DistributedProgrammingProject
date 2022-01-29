@@ -1,8 +1,8 @@
 package com.example.deliveryAppServer.service;
 
-import com.example.deliveryAppServer.model.order.DishEntity;
-import com.example.deliveryAppServer.model.order.MenuEntity;
-import com.example.deliveryAppServer.model.user.ProviderEntity;
+import com.example.deliveryAppServer.model.dao.order.DishEntity;
+import com.example.deliveryAppServer.model.dao.order.MenuEntity;
+import com.example.deliveryAppServer.model.dao.user.ProviderEntity;
 
 import java.util.List;
 

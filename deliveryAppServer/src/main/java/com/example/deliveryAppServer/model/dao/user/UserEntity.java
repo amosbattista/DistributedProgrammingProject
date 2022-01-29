@@ -1,4 +1,4 @@
-package com.example.deliveryAppServer.model.user;
+package com.example.deliveryAppServer.model.dao.user;
 
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;

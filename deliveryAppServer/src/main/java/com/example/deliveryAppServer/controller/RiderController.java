@@ -1,9 +1,10 @@
 package com.example.deliveryAppServer.controller;
 
+import com.example.deliveryAppServer.exception.OrderNotFound;
 import com.example.deliveryAppServer.model.enumerations.OrderState;
-import com.example.deliveryAppServer.model.order.OrderEntity;
-import com.example.deliveryAppServer.model.user.CustomerEntity;
-import com.example.deliveryAppServer.model.user.RiderEntity;
+import com.example.deliveryAppServer.model.enumerations.OrderType;
+import com.example.deliveryAppServer.model.dao.order.OrderEntity;
+import com.example.deliveryAppServer.model.dao.user.RiderEntity;
 import com.example.deliveryAppServer.service.OrderService;
 import com.example.deliveryAppServer.service.RiderService;
 import lombok.extern.slf4j.Slf4j;
@@ -58,22 +59,31 @@ public class RiderController {
 
     @PutMapping("/acceptOrder")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public void acceptOrder(long orderId){
+    public void acceptOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Accept order");
+        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY_RIDERS)){
+            throw new OrderNotFound("Wrong order type!");
+        }
         orderService.changeOrderState(orderId, OrderState.ACCEPTED);
     }
 
     @PutMapping("/shipOrder")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public void shipOrder(long orderId){
+    public void shipOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Ship order");
+        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY_RIDERS)){
+            throw new OrderNotFound("Wrong order type!");
+        }
         orderService.changeOrderState(orderId, OrderState.SHIPPED);
     }
 
     @PutMapping("/deliveredOrder")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public void deliveredOrder(long orderId){
+    public void deliveredOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Delivered order");
+        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY_RIDERS)){
+            throw new OrderNotFound("Wrong order type!");
+        }
         orderService.changeOrderState(orderId, OrderState.COMPLETED);
     }
 

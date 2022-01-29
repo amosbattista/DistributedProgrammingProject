@@ -1,16 +1,12 @@
 package com.example.deliveryAppServer.controller;
 
-import com.example.deliveryAppServer.model.order.DishOrderAssociation;
-import com.example.deliveryAppServer.model.order.MenuEntity;
-import com.example.deliveryAppServer.model.order.OrderEntity;
-import com.example.deliveryAppServer.model.user.CustomerEntity;
-import com.example.deliveryAppServer.model.user.ProviderEntity;
+import com.example.deliveryAppServer.model.dao.order.OrderEntity;
+import com.example.deliveryAppServer.model.dao.user.CustomerEntity;
+import com.example.deliveryAppServer.model.dao.user.ProviderEntity;
 import com.example.deliveryAppServer.service.CustomerService;
 import com.example.deliveryAppServer.service.OrderService;
 import com.example.deliveryAppServer.service.ProviderService;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Or;
-import org.hibernate.criterion.Order;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
-
-import static com.example.deliveryAppServer.model.enumerations.OrderState.COMPLETED;
-import static com.example.deliveryAppServer.model.enumerations.OrderState.REFUSED;
 
 @RestController
 @RequestMapping("/api/customer")
@@ -106,7 +99,6 @@ public class CustomerController {
         customerService.updateBalance(increment, id);
 
     }
-
 
 
 

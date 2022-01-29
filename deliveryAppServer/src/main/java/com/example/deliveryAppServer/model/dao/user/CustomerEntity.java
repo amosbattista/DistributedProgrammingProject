@@ -1,6 +1,6 @@
-package com.example.deliveryAppServer.model.user;
+package com.example.deliveryAppServer.model.dao.user;
 
-import com.example.deliveryAppServer.model.order.OrderEntity;
+import com.example.deliveryAppServer.model.dao.order.OrderEntity;
 import lombok.Data;
 import org.hibernate.annotations.DynamicUpdate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

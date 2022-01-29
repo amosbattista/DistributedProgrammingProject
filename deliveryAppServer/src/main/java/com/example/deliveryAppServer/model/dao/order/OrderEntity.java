@@ -1,21 +1,16 @@
-package com.example.deliveryAppServer.model.order;
+package com.example.deliveryAppServer.model.dao.order;
 
+import com.example.deliveryAppServer.model.dao.user.CustomerEntity;
 import com.example.deliveryAppServer.model.enumerations.OrderState;
 import com.example.deliveryAppServer.model.enumerations.OrderType;
-import com.example.deliveryAppServer.model.user.ProviderEntity;
-import com.example.deliveryAppServer.model.user.RiderEntity;
-import com.example.deliveryAppServer.model.user.UserEntity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.deliveryAppServer.model.dao.user.ProviderEntity;
+import com.example.deliveryAppServer.model.dao.user.RiderEntity;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import com.example.deliveryAppServer.model.user.CustomerEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;

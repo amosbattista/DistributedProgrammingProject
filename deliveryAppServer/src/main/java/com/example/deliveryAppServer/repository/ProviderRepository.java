@@ -1,6 +1,6 @@
 package com.example.deliveryAppServer.repository;
 
-import com.example.deliveryAppServer.model.user.ProviderEntity;
+import com.example.deliveryAppServer.model.dao.user.ProviderEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

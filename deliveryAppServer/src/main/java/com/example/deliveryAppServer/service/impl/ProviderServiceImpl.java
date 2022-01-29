@@ -1,24 +1,19 @@
 package com.example.deliveryAppServer.service.impl;
 
-import com.example.deliveryAppServer.exception.InsufficientBalanceException;
 import com.example.deliveryAppServer.exception.UserAlreadyExists;
 import com.example.deliveryAppServer.exception.UserNotFound;
-import com.example.deliveryAppServer.model.order.DishEntity;
-import com.example.deliveryAppServer.model.order.MenuEntity;
-import com.example.deliveryAppServer.model.user.CustomerEntity;
-import com.example.deliveryAppServer.model.user.ProviderEntity;
-import com.example.deliveryAppServer.repository.CustomerRepository;
+import com.example.deliveryAppServer.model.dao.order.DishEntity;
+import com.example.deliveryAppServer.model.dao.order.MenuEntity;
+import com.example.deliveryAppServer.model.dao.user.ProviderEntity;
 import com.example.deliveryAppServer.repository.DishRepository;
 import com.example.deliveryAppServer.repository.MenuRepository;
 import com.example.deliveryAppServer.repository.ProviderRepository;
-import com.example.deliveryAppServer.service.CustomerService;
 import com.example.deliveryAppServer.service.ProviderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @Service
 @Slf4j
