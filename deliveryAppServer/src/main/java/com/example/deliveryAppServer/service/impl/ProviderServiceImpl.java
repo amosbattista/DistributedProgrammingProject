@@ -140,7 +140,9 @@ public class ProviderServiceImpl extends PersonServiceImpl implements ProviderSe
 
     @Override
     public void removeDish(Long dishId, Long providerId) {
-        dishRepository.deleteById(dishId);
+        DishEntity dish = dishRepository.getById(dishId);
+        dish.setMenu(null);
+        dishRepository.save(dish);
     }
 
 

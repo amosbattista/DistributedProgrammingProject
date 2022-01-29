@@ -34,4 +34,10 @@ public class MenuEntity implements Serializable {
 
     }
 
+    public void removeDish(DishEntity dish){
+
+        dishEntities.remove(dish);
+
+    }
+
 }
