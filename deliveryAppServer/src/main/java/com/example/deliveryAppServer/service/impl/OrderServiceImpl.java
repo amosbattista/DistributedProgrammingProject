@@ -2,17 +2,20 @@ package com.example.deliveryAppServer.service.impl;
 
 import com.example.deliveryAppServer.OrderStateGraph.OrderStateGraph;
 import com.example.deliveryAppServer.exception.*;
+import com.example.deliveryAppServer.model.dao.user.RiderEntity;
 import com.example.deliveryAppServer.model.enumerations.OrderState;
 import com.example.deliveryAppServer.model.enumerations.OrderType;
 import com.example.deliveryAppServer.model.dao.order.DishOrderAssociation;
 import com.example.deliveryAppServer.model.dao.order.OrderEntity;
 import com.example.deliveryAppServer.repository.DishRepository;
 import com.example.deliveryAppServer.repository.OrderRepository;
+import com.example.deliveryAppServer.repository.RiderRepository;
 import com.example.deliveryAppServer.service.CustomerService;
 import com.example.deliveryAppServer.service.OrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,6 +37,9 @@ public class OrderServiceImpl implements OrderService{
     private CustomerService customerService;
 
     private OrderStateGraph orderStateGraph;
+
+    @Autowired
+    private RiderRepository riderRepository;
 
     @Override
     public OrderEntity createNewOrder(OrderEntity order) {
@@ -151,5 +157,29 @@ public class OrderServiceImpl implements OrderService{
 
 
         return order;
+    }
+
+    public void setRiderOrder(Long orderId, Long riderId){
+
+        RiderEntity rider = riderRepository.getById(riderId);
+        OrderEntity order;
+
+        if(rider == null)
+            throw new UserNotFound();
+
+        try {
+            order = orderRepository.findById(orderId).get();
+        }catch (NoSuchElementException ex){
+            throw new OrderNotFound();
+        }
+
+        order.setRider(rider);
+
+        orderRepository.save(order);
+
+
+
+
+
     }
 }

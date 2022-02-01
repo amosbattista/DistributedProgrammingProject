@@ -1,5 +1,6 @@
 package com.example.deliveryAppServer.service.impl;
 
+import com.example.deliveryAppServer.exception.DishNotFound;
 import com.example.deliveryAppServer.exception.UserAlreadyExists;
 import com.example.deliveryAppServer.exception.UserNotFound;
 import com.example.deliveryAppServer.model.dao.order.DishEntity;
@@ -18,6 +19,7 @@ import java.util.List;
 @Service
 @Slf4j
 public class ProviderServiceImpl extends PersonServiceImpl implements ProviderService {
+
     @Autowired
     private ProviderRepository providerRepository;
     @Autowired
@@ -136,6 +138,21 @@ public class ProviderServiceImpl extends PersonServiceImpl implements ProviderSe
 
         return dishRepository.save(dish);
 
+    }
+
+    @Override
+    public DishEntity updateDish(DishEntity dish, Long providerId) {
+        ProviderEntity prov = providerRepository.getById(providerId);
+        MenuEntity menu = prov.getMenu();
+
+        if(menu==null || !menu.getDishEntities().contains(dish)){
+
+            throw new DishNotFound();
+        }
+
+        dish.setMenu(menu);
+
+        return dishRepository.save(dish);
     }
 
     @Override

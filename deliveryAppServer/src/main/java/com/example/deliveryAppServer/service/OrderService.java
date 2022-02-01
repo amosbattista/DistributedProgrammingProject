@@ -17,4 +17,6 @@ public interface OrderService {
     public void changeOrderType(Long orderId, OrderType orderType);
 
     public OrderEntity getCurrentOrder(Long customerId);
+
+    public void setRiderOrder(Long orderId, Long riderId);
 }

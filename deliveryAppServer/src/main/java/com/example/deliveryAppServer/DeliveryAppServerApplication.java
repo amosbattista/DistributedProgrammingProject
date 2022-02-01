@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaAuditing
 @EnableJpaRepositories
 @SpringBootApplication(exclude = { SecurityAutoConfiguration.class })
+
 public class DeliveryAppServerApplication {
 
 

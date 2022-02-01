@@ -21,6 +21,7 @@ public interface ProviderService extends PersonService {
     MenuEntity getMenu(Long providerId);
 
     DishEntity addDish(DishEntity dish,Long providerId);
+    DishEntity updateDish(DishEntity dish,Long providerId);
 
     void removeDish(Long dishId, Long providerId);
 }

@@ -46,4 +46,16 @@ public class DishEntity implements Serializable {
     @OneToMany(targetEntity = DishOrderAssociation.class, cascade = CascadeType.MERGE, fetch = FetchType.LAZY, mappedBy = "dish")
     private List<DishOrderAssociation> dishOrderAssociations;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DishEntity that = (DishEntity) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

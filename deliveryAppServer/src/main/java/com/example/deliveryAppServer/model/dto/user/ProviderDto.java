@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 public class ProviderDto {
 
-    private String id;
+    private Long id;
     private String telephoneNumber;
     private String providerName;
     private String cuisine;

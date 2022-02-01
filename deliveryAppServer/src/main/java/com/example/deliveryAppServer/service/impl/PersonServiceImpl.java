@@ -23,13 +23,10 @@ public class PersonServiceImpl <Person extends PersonEntity, PersonId extends Lo
 
         Person personEntity;
 
-        try{
-            personEntity = personRepository.findByUsername(username);
-        }catch(NoSuchElementException ex){
-            throw new UserNotFound();
-        }
 
-        if (!personEntity.getPassword().equals(password)) {
+        personEntity = personRepository.findByUsername(username);
+
+        if (personEntity==null || !personEntity.getPassword().equals(password) ) {
             throw new InvalidCredentials();
         }
 

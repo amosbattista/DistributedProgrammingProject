@@ -254,6 +254,15 @@ public class ProviderController {
         return providerService.addDish(dish, providerId);
     }
 
+    @PutMapping("/{provider-id}/updateDish")
+    @ResponseStatus(code = HttpStatus.OK)
+    public DishEntity updateDish(@PathVariable("provider-id") Long providerId,@Valid @RequestBody DishEntity dish){
+        log.info("[REST Controller] Put dish");
+        return providerService.updateDish(dish, providerId);
+
+    }
+
+
     @DeleteMapping("/{provider-id}/removeDish")
     @ResponseStatus(code = HttpStatus.OK)
     public void removeDish(@PathVariable("provider-id") Long providerId, @RequestParam(name = "dish_id") Long dishId){
@@ -261,6 +270,7 @@ public class ProviderController {
         log.info("[REST Controller] Remove Dish for provider: "+providerId);
         providerService.removeDish(dishId, providerId);
     }
+
 
 
 

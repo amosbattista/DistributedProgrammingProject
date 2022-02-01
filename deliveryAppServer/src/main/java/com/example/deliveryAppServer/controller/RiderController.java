@@ -80,14 +80,15 @@ public class RiderController {
         return modelMapper.convertOrderListToDto(orderEntityList);
     }
 
-    @PutMapping("/acceptOrder")
+    @PutMapping("/{rider-id}/acceptOrder")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
-    public void acceptOrder(@RequestParam(name = "id") Long orderId){
+    public void acceptOrder(@RequestParam(name = "id") Long orderId, @PathVariable("rider-id") Long riderId){
         log.info("[REST Controller] Accept order");
         if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY_RIDERS)){
             throw new OrderNotFound("Wrong order type!");
         }
         orderService.changeOrderState(orderId, OrderState.ACCEPTED);
+        orderService.setRiderOrder(orderId, riderId);
     }
 
     @PutMapping("/shipOrder")
