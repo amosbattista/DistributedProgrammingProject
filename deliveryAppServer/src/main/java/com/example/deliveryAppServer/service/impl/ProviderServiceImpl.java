@@ -1,8 +1,6 @@
 package com.example.deliveryAppServer.service.impl;
 
-import com.example.deliveryAppServer.exception.DishNotFound;
-import com.example.deliveryAppServer.exception.UserAlreadyExists;
-import com.example.deliveryAppServer.exception.UserNotFound;
+import com.example.deliveryAppServer.exception.*;
 import com.example.deliveryAppServer.model.dao.order.DishEntity;
 import com.example.deliveryAppServer.model.dao.order.MenuEntity;
 import com.example.deliveryAppServer.model.dao.user.ProviderEntity;
@@ -11,9 +9,13 @@ import com.example.deliveryAppServer.repository.MenuRepository;
 import com.example.deliveryAppServer.repository.ProviderRepository;
 import com.example.deliveryAppServer.service.ProviderService;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Service
@@ -136,8 +138,14 @@ public class ProviderServiceImpl extends PersonServiceImpl implements ProviderSe
 
         dish.setMenu(menu);
 
-        return dishRepository.save(dish);
+        try {
+            dish = dishRepository.save(dish);
+        }
+        catch (DataIntegrityViolationException ex){
+            throw new DishAlreadyPresent();
 
+        }
+        return dish;
     }
 
     @Override
@@ -152,7 +160,14 @@ public class ProviderServiceImpl extends PersonServiceImpl implements ProviderSe
 
         dish.setMenu(menu);
 
-        return dishRepository.save(dish);
+        try {
+            dish = dishRepository.save(dish);
+        }
+        catch (DataIntegrityViolationException ex){
+            throw new DishAlreadyPresent();
+
+        }
+        return dish;
     }
 
     @Override

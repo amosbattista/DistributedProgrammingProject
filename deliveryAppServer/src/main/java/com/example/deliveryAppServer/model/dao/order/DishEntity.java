@@ -18,6 +18,9 @@ import java.util.Objects;
 @Setter
 @EntityListeners(AuditingEntityListener.class) //Non necessario
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
+@Table(uniqueConstraints={
+        @UniqueConstraint(columnNames = {"name", "menuId"})
+})
 public class DishEntity implements Serializable {
 
     @Id
