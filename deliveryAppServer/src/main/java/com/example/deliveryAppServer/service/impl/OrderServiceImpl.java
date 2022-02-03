@@ -188,30 +188,33 @@ public class OrderServiceImpl implements OrderService{
 
     }
 
-    }
-
     @Override
     public List<OrderEntity> getAtLeastAcceptedOrdersByRider(Long riderId) { //accettati-shipped-completed
 
         return orderRepository.findAllByRiderIdAndOrderStateIn(riderId, List.of(ACCEPTED, SHIPPED, COMPLETED));
-    @Scheduled(fixedDelay = 60*1000)
-    public void refuseExpiredOrders(){
-        log.info("Thread to delete expired order started");
-        List <OrderEntity> list = orderRepository.findPendingAndSemiaccptedOrders();
+    }
+        @Scheduled(fixedDelay = 60*1000)
+        public void refuseExpiredOrders(){
+            log.info("Thread to delete expired order started");
+            List <OrderEntity> list = orderRepository.findPendingAndSemiaccptedOrders();
 
-        if(list.isEmpty()){
-            log.info("No order is expired");
-            return;
-        }
+            if(list.isEmpty()){
+                log.info("No order is expired");
+                return;
+            }
 
-        for (OrderEntity order : list) {
-            log.info(order.getId().toString());
-            LocalDateTime deliveryTime = order.getDeliveryTime();
-            if(deliveryTime.isAfter(LocalDateTime.now().minusMinutes(OrderEntity.minuteOffsetDeliveryTime)))
-                log.info("Order: "+order.getId()+" Expired");
+            for (OrderEntity order : list) {
+                log.info(order.getId().toString());
+                LocalDateTime deliveryTime = order.getDeliveryTime();
+                if(deliveryTime.isAfter(LocalDateTime.now().minusMinutes(OrderEntity.minuteOffsetDeliveryTime)))
+                    log.info("Order: "+order.getId()+" Expired");
                 order.setOrderState(REFUSED);
                 orderRepository.save(order);
                 log.info("Order: "+order.getId()+" Refused ");
+            }
         }
+
+
     }
-}
+
+

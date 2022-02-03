@@ -1,4 +1,4 @@
-    List<OrderEntity> findAllByRiderIdAndOrderStateIn(Long providerId, List<OrderState> orderStateList);package com.example.deliveryAppServer.repository;
+package com.example.deliveryAppServer.repository;
 
 import com.example.deliveryAppServer.model.enumerations.OrderState;
 import com.example.deliveryAppServer.model.dao.order.OrderEntity;
@@ -22,11 +22,4 @@ public interface OrderRepository extends JpaRepository<OrderEntity,Long> {
             "WHERE orders.orderState = 'PENDING' or orders.orderState = 'SEMIACCEPTED'")
     List<OrderEntity> findPendingAndSemiaccptedOrders();
 
-
-    List<OrderEntity> findAllByRiderIdAndOrderStateIn(Long providerId, List<OrderState> orderStateList);
-
-    @Query(value ="SELECT orders "+
-            "FROM OrderEntity orders " +
-            "WHERE orders.orderState = 'PENDING' or orders.orderState = 'SEMIACCEPTED'")
-    List<OrderEntity> findPendingAndSemiaccptedOrders();
 }
