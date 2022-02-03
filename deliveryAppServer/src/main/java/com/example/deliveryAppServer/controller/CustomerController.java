@@ -104,6 +104,16 @@ public class CustomerController {
 
     }
 
+    @PostMapping("/postOrderDto")
+    @ResponseStatus(code = HttpStatus.CREATED)
+    public OrderDto postNewOrderDto(@Valid @RequestBody OrderDto orderDto){
+        log.info("[REST Controller] Post order");
+        OrderEntity orderDao = modelMapper.convertOrderDtoToDao(orderDto);
+        OrderEntity newOrder = orderService.createNewOrder(orderDao);
+        return modelMapper.convertOrderToDtoForCustomer(newOrder);
+
+    }
+
     @PostMapping("/login")
     @ResponseStatus(code = HttpStatus.OK)
     public Long login(@RequestBody Map<String, String> params){

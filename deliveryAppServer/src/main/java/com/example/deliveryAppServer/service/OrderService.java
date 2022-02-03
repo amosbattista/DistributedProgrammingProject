@@ -20,4 +20,6 @@ public interface OrderService {
 
     public void setRiderOrder(Long orderId, Long riderId);
     public void refuseExpiredOrders();
+
+    public List<OrderEntity> getAtLeastAcceptedOrdersByRider(Long riderId);
 }

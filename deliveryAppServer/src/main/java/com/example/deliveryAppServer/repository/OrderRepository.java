@@ -16,8 +16,10 @@ public interface OrderRepository extends JpaRepository<OrderEntity,Long> {
     List<OrderEntity> findAllByProviderIdAndOrderState(Long providerId, OrderState orderState);
     OrderEntity findByCustomerIdAndOrderStateNotIn(Long customerId, List<OrderState> orderStateList);
     Boolean existsByCustomerIdAndOrderStateNotIn(Long customerId, List<OrderState> orderStateList);
+    List<OrderEntity> findAllByRiderIdAndOrderStateIn(Long providerId, List<OrderState> orderStateList);
     @Query(value ="SELECT orders "+
             "FROM OrderEntity orders " +
             "WHERE orders.orderState = 'PENDING' or orders.orderState = 'SEMIACCEPTED'")
     List<OrderEntity> findPendingAndSemiaccptedOrders();
+
 }
