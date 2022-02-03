@@ -193,26 +193,27 @@ public class OrderServiceImpl implements OrderService{
 
         return orderRepository.findAllByRiderIdAndOrderStateIn(riderId, List.of(ACCEPTED, SHIPPED, COMPLETED));
     }
-        @Scheduled(fixedDelay = 60*1000)
-        public void refuseExpiredOrders(){
-            log.info("Thread to delete expired order started");
-            List <OrderEntity> list = orderRepository.findPendingAndSemiaccptedOrders();
 
-            if(list.isEmpty()){
-                log.info("No order is expired");
-                return;
-            }
+    @Scheduled(fixedDelay = 1000)
+    public void refuseExpiredOrders(){
+        log.info("Thread to delete expired order started");
+        List <OrderEntity> list = orderRepository.findPendingAndSemiaccptedOrders();
 
-            for (OrderEntity order : list) {
-                log.info(order.getId().toString());
-                LocalDateTime deliveryTime = order.getDeliveryTime();
-                if(deliveryTime.isAfter(LocalDateTime.now().minusMinutes(OrderEntity.minuteOffsetDeliveryTime)))
-                    log.info("Order: "+order.getId()+" Expired");
+        if(list.isEmpty()){
+            log.info("No order is expired");
+            return;
+        }
+
+        for (OrderEntity order : list) {
+            LocalDateTime deliveryTime = order.getDeliveryTime();
+            if(deliveryTime.minusMinutes((OrderEntity.minuteOffsetDeliveryTime)).isBefore(LocalDateTime.now())) {
+                log.info("Order: " + order.getId() + " Expired");
                 order.setOrderState(REFUSED);
                 orderRepository.save(order);
-                log.info("Order: "+order.getId()+" Refused ");
+                log.info("Order: " + order.getId() + " Refused ");
             }
         }
+    }
 
 
     }
