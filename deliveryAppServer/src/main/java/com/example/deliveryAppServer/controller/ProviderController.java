@@ -131,6 +131,14 @@ public class ProviderController {
 
     }
 
+    @GetMapping("{provider-id}/getRefusedOrders")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<OrderDto> getRefusedOrders(@PathVariable("provider-id") Long providerId){
+        log.info("[REST CONTROLLER] Get Refused Orders");
+        List<OrderEntity> orderEntityList = orderService.getProviderOrdersByState(providerId, OrderState.REFUSED);
+        return modelMapper.convertOrderListToDto(orderEntityList);
+    }
+
     @PutMapping("/putTakeAwayOrder") //PER TAKE-AWAY o SPEDIZIONE con i miei fattorini
     @ResponseStatus(code = HttpStatus.OK)
     public void acceptTakeAwayOrder(@RequestParam(name = "id") Long orderId){

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.LinkedList;
 import java.util.List;
 
 @Service
@@ -123,6 +124,7 @@ public class ProviderServiceImpl extends PersonServiceImpl implements ProviderSe
         if(menu == null){
             menu = new MenuEntity();
             menu.setProvider(prov);
+            menu.setDishEntities(new LinkedList<DishEntity>());
             prov.setMenu(menuRepository.save(menu));
             providerRepository.save(prov);
         }
