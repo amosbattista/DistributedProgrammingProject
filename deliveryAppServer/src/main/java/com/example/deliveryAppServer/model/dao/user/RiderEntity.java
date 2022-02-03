@@ -21,9 +21,6 @@ import java.util.List;
 public class RiderEntity extends PersonEntity implements Serializable {
 
     @NotBlank
-    private String documentPath;
-
-    @NotBlank
     private String vehicleType;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

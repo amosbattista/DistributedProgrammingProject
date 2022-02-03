@@ -5,6 +5,7 @@ import com.example.deliveryAppServer.model.dao.user.ProviderEntity;
 import com.example.deliveryAppServer.model.dto.order.OrderDto;
 import com.example.deliveryAppServer.model.dto.user.ProviderDto;
 import lombok.Data;
+import org.aspectj.weaver.ast.Or;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,6 +42,12 @@ public class ModelMapperDto {
         OrderDto orderDto = modelMapper.map(order, OrderDto.class);
         orderDto.getProvider().setMenu(null);
         return orderDto;
+    }
+
+    public OrderEntity convertOrderDtoToDao(OrderDto orderDto) {
+        OrderEntity order = modelMapper.map(orderDto, OrderEntity.class);
+
+        return order;
     }
 
     public OrderDto convertOrderToDtoForRider(OrderEntity order) {

@@ -19,4 +19,6 @@ public interface OrderService {
     public OrderEntity getCurrentOrder(Long customerId);
 
     public void setRiderOrder(Long orderId, Long riderId);
+
+    public List<OrderEntity> getAtLeastAcceptedOrdersByRider(Long riderId);
 }

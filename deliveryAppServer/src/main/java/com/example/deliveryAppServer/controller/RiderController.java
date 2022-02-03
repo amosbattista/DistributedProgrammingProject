@@ -3,7 +3,6 @@ package com.example.deliveryAppServer.controller;
 import com.example.deliveryAppServer.exception.OrderNotFound;
 import com.example.deliveryAppServer.exception.UserNotFound;
 import com.example.deliveryAppServer.mapper.ModelMapperDto;
-import com.example.deliveryAppServer.model.dao.user.ProviderEntity;
 import com.example.deliveryAppServer.model.dto.order.OrderDto;
 import com.example.deliveryAppServer.model.enumerations.OrderState;
 import com.example.deliveryAppServer.model.enumerations.OrderType;
@@ -80,6 +79,15 @@ public class RiderController {
         return modelMapper.convertOrderListToDto(orderEntityList);
     }
 
+
+    @GetMapping("/{rider-id}/getAtLeastAcceptedOrders")
+    @ResponseStatus(code = HttpStatus.OK)
+    public List<OrderDto> getAtLeastAcceptedOrders(@PathVariable(name = "rider-id") Long riderId){
+        log.info("[REST Controller] Get accepted orders");
+        List<OrderEntity> orderEntityList = orderService.getAtLeastAcceptedOrdersByRider(riderId);
+        return modelMapper.convertOrderListToDto(orderEntityList);
+    }
+
     @PutMapping("/{rider-id}/acceptOrder")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public void acceptOrder(@RequestParam(name = "id") Long orderId, @PathVariable("rider-id") Long riderId){
@@ -109,6 +117,13 @@ public class RiderController {
             throw new OrderNotFound("Wrong order type!");
         }
         orderService.changeOrderState(orderId, OrderState.COMPLETED);
+    }
+
+    @GetMapping("/order/{order-id}") // serve??
+    public OrderDto getOrderDtoById(@PathVariable("order-id") Long orderId){
+        log.info("[REST Controller] Get order state, id=: "+orderId);
+        OrderEntity order = orderService.getOrderState(orderId);
+        return modelMapper.convertOrderToDtoForCustomer(order);
     }
 
 

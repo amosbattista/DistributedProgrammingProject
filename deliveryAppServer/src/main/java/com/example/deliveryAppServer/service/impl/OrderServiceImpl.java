@@ -178,8 +178,11 @@ public class OrderServiceImpl implements OrderService{
         orderRepository.save(order);
 
 
+    }
 
+    @Override
+    public List<OrderEntity> getAtLeastAcceptedOrdersByRider(Long riderId) { //accettati-shipped-completed
 
-
+        return orderRepository.findAllByRiderIdAndOrderStateIn(riderId, List.of(ACCEPTED, SHIPPED, COMPLETED));
     }
 }
