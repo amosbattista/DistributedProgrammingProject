@@ -72,7 +72,7 @@ public class ProviderController {
     }
 
 
-    @PostMapping("/{provider-id}")
+    @PutMapping("/{provider-id}")
     @ResponseStatus(code = HttpStatus.OK)
     public void setAvail(@RequestParam(name = "availability") Boolean avail, @PathVariable("provider-id") Long providerId){
         providerService.setAvailability(avail,providerId);

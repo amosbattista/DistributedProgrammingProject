@@ -16,8 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -78,7 +80,8 @@ public class OrderServiceImpl implements OrderService{
         catch (Exception ex){
             orderRepository.deleteById(order.getId());
             customerService.updateBalance(total, order.getCustomer().getId());
-            throw new ServerError("Order REFUSED");
+            //throw new ServerError("Order REFUSED");
+            throw ex;
 
         }
 
@@ -130,6 +133,12 @@ public class OrderServiceImpl implements OrderService{
         }
         else
             throw new IllegalOrderState();
+        if(orderState.equals(REFUSED)){
+            Long customerId = order.getCustomer().getId();
+            Double refund = order.getPrice();
+            customerService.updateBalance(refund, customerId);
+        }
+
 
     }
 
@@ -177,6 +186,7 @@ public class OrderServiceImpl implements OrderService{
 
         orderRepository.save(order);
 
+    }
 
     }
 
@@ -184,5 +194,24 @@ public class OrderServiceImpl implements OrderService{
     public List<OrderEntity> getAtLeastAcceptedOrdersByRider(Long riderId) { //accettati-shipped-completed
 
         return orderRepository.findAllByRiderIdAndOrderStateIn(riderId, List.of(ACCEPTED, SHIPPED, COMPLETED));
+    @Scheduled(fixedDelay = 60*1000)
+    public void refuseExpiredOrders(){
+        log.info("Thread to delete expired order started");
+        List <OrderEntity> list = orderRepository.findPendingAndSemiaccptedOrders();
+
+        if(list.isEmpty()){
+            log.info("No order is expired");
+            return;
+        }
+
+        for (OrderEntity order : list) {
+            log.info(order.getId().toString());
+            LocalDateTime deliveryTime = order.getDeliveryTime();
+            if(deliveryTime.isAfter(LocalDateTime.now().minusMinutes(OrderEntity.minuteOffsetDeliveryTime)))
+                log.info("Order: "+order.getId()+" Expired");
+                order.setOrderState(REFUSED);
+                orderRepository.save(order);
+                log.info("Order: "+order.getId()+" Refused ");
+        }
     }
 }
