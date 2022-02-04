@@ -22,6 +22,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/customer")
 @Slf4j
+/**
+ * Define all the API calls for the customer user
+ */
 public class CustomerController {
 
     @Autowired
@@ -37,6 +40,12 @@ public class CustomerController {
     private ModelMapperDto modelMapper;
 
 
+    /**
+     * Retrieve from the server the Customer passed through ID
+     * @param customerId is the ID of the customer to retrieve
+     * @return a CustomerEntity expressed as JSON
+     * @throws UserNotFound if there is no customer with the given ID
+     */
     @GetMapping("/{customer-id}/myinfo")
     public CustomerEntity getMyInfo(@PathVariable("customer-id") Long customerId){
         log.info("[REST Controller] Get customer info for id: "+customerId);
@@ -48,17 +57,26 @@ public class CustomerController {
             throw new UserNotFound();
         }
 
-
     }
 
+    /**
+     * Retrieve form the server a list of available ProviderEntity; convert the List<ProviderEntity> in a
+     * List<ProviderDto> through a model mapper.
+     * @return List<ProviderDto> expressed as JSON list
+     */
     @GetMapping("/avail-providers")
     public List<ProviderDto> getAvailableProvidersDTO(){
         log.info("[REST Controller] Get available providers");
         List<ProviderEntity> prov = providerService.getAvailableProviders();
-
         return modelMapper.convertProviderListToDto(prov);
     }
 
+    /**
+     * Retrieve from the server the orders list of a given Customer identified by ID; convert the List<OrderEntity> in a
+     * List<OrderDto> through a model mapper.
+     * @param customerId is the customer ID
+     * @return List<OrderDto> expressed as JSON list
+     */
     @GetMapping("/{customer-id}/myorders")
     public List<OrderDto> getOrderHistory(@PathVariable("customer-id") Long customerId){
         log.info("[REST Controller] Get order history for id: "+customerId);
@@ -67,6 +85,12 @@ public class CustomerController {
 
     }
 
+    /**
+     * Retrieve from the server the current order of a Customer identified by ID; convert the OrderEntity in
+     * a OrderDto throug a model mapper
+     * @param customerId is the customer ID
+     * @return OrderDto expressed as a JSON
+     */
     @GetMapping("/{customer-id}/current-order")
     public OrderDto getCurrentOrderDTO(@PathVariable("customer-id") Long customerId){
         log.info("[REST Controller] Get current order for customer: "+customerId);
@@ -74,7 +98,7 @@ public class CustomerController {
         return modelMapper.convertOrderToDtoForCustomer(order);
     }
 
-    @GetMapping("/order/{order-id}") // serve??
+    @GetMapping("/order/{order-id}") //
     public OrderDto getOrderStateDTO(@PathVariable("order-id") Long orderId){
         log.info("[REST Controller] Get order state, id=: "+orderId);
         OrderEntity order = orderService.getOrderState(orderId);
