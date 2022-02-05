@@ -24,6 +24,9 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/provider")
 @Slf4j
+/**
+ * * Define all the API calls for the customer user
+ */
 public class ProviderController {
 
     @Autowired
@@ -35,6 +38,12 @@ public class ProviderController {
     @Autowired
     private ModelMapperDto modelMapper;
 
+    /**
+     * [GET] Retrieve from the server the Provider passed through ID
+     * @param providerId  is the ID of the provider to retrieve
+     * @return a ProviderEntity expressed as JSON
+     * @throws UserNotFound if there is no provider with the given ID
+     */
     @GetMapping("/{provider-id}/myinfo")
     @ResponseStatus(code = HttpStatus.OK)
     public ProviderEntity getMyInfo(@PathVariable("provider-id") Long providerId){
@@ -50,6 +59,11 @@ public class ProviderController {
     }
 
 
+    /**
+     * [POST] Create a new provider in the server
+     * @param provider represent the Provider to be created
+     * @return ProviderEntity just created, expressed as a JSON
+     */
     @PostMapping("/postProvider")
     @ResponseStatus(code = HttpStatus.CREATED)
     public ProviderEntity createNewProvider(@Valid @RequestBody ProviderEntity provider){
@@ -57,6 +71,11 @@ public class ProviderController {
         return providerService.createNewProvider(provider);
     }
 
+    /**
+     * [PUT] Update into the server the ProviderEntity passed;
+     * @param provider represent the Provider to be updated
+     * @return ProviderEntity just updated, expressed as a JSON
+     */
     @PutMapping("/putProvider")
     @ResponseStatus(code = HttpStatus.OK)
     public ProviderEntity putProvider(@Valid @RequestBody ProviderEntity provider){
@@ -64,14 +83,11 @@ public class ProviderController {
         return providerService.updateProvider(provider);
     }
 
-    @GetMapping("/getAvalaibleProviders") // serve??
-    @ResponseStatus(code = HttpStatus.OK)
-    public List<ProviderEntity> getAvailaibleProvider(){
-        log.info("[REST Controller] Get Available provider");
-        return providerService.getAvailableProviders();
-    }
-
-
+    /**
+     * [PUT] Update the provider 'availability' field
+     * @param avail is a Boolean that indicates if the provider is available
+     * @param providerId is a Long that represents the provider ID
+     */
     @PutMapping("/{provider-id}")
     @ResponseStatus(code = HttpStatus.OK)
     public void setAvail(@RequestParam(name = "availability") Boolean avail, @PathVariable("provider-id") Long providerId){
@@ -80,7 +96,11 @@ public class ProviderController {
         log.info("[REST Controller] Login provider");
     }
 
-
+    /**
+     * [POST] Allows the login to a provider, given his credentials
+     * @param params is a Map in which is required to insert username and password
+     * @return a Long that represents the provider ID
+     */
     @PostMapping("/login")
     @ResponseStatus(code = HttpStatus.OK)
     public Long login(@RequestBody Map<String, String> params){
@@ -90,6 +110,12 @@ public class ProviderController {
         return providerService.login(username, password);
     }
 
+    /**
+     * [GET] Retrieve from the server the pending orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
+     * List<OrderDto> through a model mapper.
+     * @param providerId is the provider ID
+     * @return List<OrderDto> expressed as JSON list
+     */
     @GetMapping("/{provider-id}/getPendingOrders")
     @ResponseStatus(code = HttpStatus.OK)
     public List<OrderDto> getPendingOrders(@PathVariable("provider-id")  Long providerId){
@@ -98,6 +124,12 @@ public class ProviderController {
         return modelMapper.convertOrderListToDto(orderEntityList);
     }
 
+    /**
+     * [GET] Retrieve from the server the accepted orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
+     * List<OrderDto> through a model mapper.
+     * @param providerId is the provider ID
+     * @return List<OrderDto> expressed as JSON list
+     */
     @GetMapping("/{provider-id}/getAcceptedOrders")
     @ResponseStatus(code = HttpStatus.OK)
     public List<OrderDto> getAcceptedOrders(@PathVariable("provider-id")  Long providerId){
@@ -106,6 +138,12 @@ public class ProviderController {
         return modelMapper.convertOrderListToDto(orderEntityList);
     }
 
+    /**
+     * [GET] Retrieve from the server the partial-accepted orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
+     * List<OrderDto> through a model mapper.
+     * @param providerId is the provider ID
+     * @return List<OrderDto> expressed as JSON list
+     */
     @GetMapping("/{provider-id}/getSemiAcceptedOrders")
     @ResponseStatus(code = HttpStatus.OK)
     public List<OrderDto> getSemiAcceptedOrders(@PathVariable("provider-id")  Long providerId){
@@ -114,6 +152,12 @@ public class ProviderController {
         return modelMapper.convertOrderListToDto(orderEntityList);
     }
 
+    /**
+     * [GET] Retrieve from the server the shipped orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
+     * List<OrderDto> through a model mapper.
+     * @param providerId is the provider ID
+     * @return List<OrderDto> expressed as JSON list
+     */
     @GetMapping("/{provider-id}/getShippedOrders")
     @ResponseStatus(code = HttpStatus.OK)
     public List<OrderDto> getShippedOrders(@PathVariable("provider-id")  Long providerId){
@@ -122,6 +166,12 @@ public class ProviderController {
         return modelMapper.convertOrderListToDto(orderEntityList);
     }
 
+    /**
+     * [GET] Retrieve from the server the completed orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
+     * List<OrderDto> through a model mapper.
+     * @param providerId is the provider ID
+     * @return List<OrderDto> expressed as JSON list
+     */
     @GetMapping("/{provider-id}/getCompletedOrders")
     @ResponseStatus(code = HttpStatus.OK)
     public List<OrderDto> getCompletedOrders(@PathVariable("provider-id")  Long providerId){
@@ -131,6 +181,12 @@ public class ProviderController {
 
     }
 
+    /**
+     * [GET] Retrieve from the server the refused orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
+     * List<OrderDto> through a model mapper.
+     * @param providerId is the provider ID
+     * @return List<OrderDto> expressed as JSON list
+     */
     @GetMapping("{provider-id}/getRefusedOrders")
     @ResponseStatus(code = HttpStatus.OK)
     public List<OrderDto> getRefusedOrders(@PathVariable("provider-id") Long providerId){
@@ -139,7 +195,12 @@ public class ProviderController {
         return modelMapper.convertOrderListToDto(orderEntityList);
     }
 
-    @PutMapping("/putTakeAwayOrder") //PER TAKE-AWAY o SPEDIZIONE con i miei fattorini
+    /**
+     * [PUT] Update the state of the given order (identfied by ID) in 'accepted', taking into account that the order type is 'take away'
+     * @param orderId is the order ID
+     * @throws OrderNotFound if there is no order with the given ID
+     */
+    @PutMapping("/putTakeAwayOrder") //PER TAKE-AWAY
     @ResponseStatus(code = HttpStatus.OK)
     public void acceptTakeAwayOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put accept order");
@@ -149,6 +210,12 @@ public class ProviderController {
         orderService.changeOrderState(orderId, OrderState.ACCEPTED);
     }
 
+    /**
+     * [PUT] Update the state of the given order (identfied by ID) in 'accepted', taking into account that the order type is
+     * a delivery that does not use the riders-app (delivery with your own riders)
+     * @param orderId is the order ID
+     * @throws OrderNotFound if there is no order with the given ID
+     */
     @PutMapping("/putNoRiderDeliveringOrder") //SPEDIZIONE con i miei fattorini
     @ResponseStatus(code = HttpStatus.OK)
     public void acceptNoRiderOrder(@RequestParam(name = "id") Long orderId){
@@ -162,6 +229,12 @@ public class ProviderController {
     }
 
 
+    /**
+     * [PUT] Update the state of the given order (identfied by ID) in 'accepted', taking into account that the order type is
+     * a delivery that use the riders-app.
+     * @param orderId is the order ID
+     * @throws OrderNotFound if there is no order with the given ID
+     */
     @PutMapping("/putRiderOrder") //SOLO PER RIDERS
     @ResponseStatus(code = HttpStatus.OK)
     public void semiAcceptedOrder(@RequestParam(name = "id") Long orderId){
@@ -174,6 +247,12 @@ public class ProviderController {
         orderService.changeOrderState(orderId, OrderState.SEMI_ACCEPTED);
     }
 
+    /**
+     * [PUT] Update the state of the given order (identfied by ID) in 'refused', taking into account that the order type is
+     * 'take away'
+     * @param orderId is the order ID
+     * @throws OrderNotFound if there is no order with the given ID
+     */
     @PutMapping("/refuseTakeAway")
     @ResponseStatus(code = HttpStatus.OK)
     public void refuseTaWOrder(@RequestParam(name = "id") Long orderId){
@@ -185,6 +264,12 @@ public class ProviderController {
         orderService.changeOrderState(orderId, OrderState.REFUSED);
     }
 
+    /**
+     * [PUT] Update the state of the given order (identfied by ID) in 'refused', taking into account that the order type is
+     * a delivery that does not use the riders-app (delivery with your own riders)
+     * @param orderId is the order ID
+     * @throws OrderNotFound if there is no order with the given ID
+     */
     @PutMapping("/refuseNoRider")
     @ResponseStatus(code = HttpStatus.OK)
     public void refuseNoRiderOrder(@RequestParam(name = "id") Long orderId){
@@ -196,6 +281,12 @@ public class ProviderController {
         orderService.changeOrderState(orderId, OrderState.REFUSED);
     }
 
+    /**
+     * [PUT] Update the state of the given order (identfied by ID) in 'refused', taking into account that the order type is
+     * a delivery that use the riders-app.
+     * @param orderId is the order ID
+     * @throws OrderNotFound if there is no order with the given ID
+     */
     @PutMapping("/refuseRider")
     @ResponseStatus(code = HttpStatus.OK)
     public void refuseRiderOrder(@RequestParam(name = "id") Long orderId){
@@ -207,6 +298,12 @@ public class ProviderController {
         orderService.changeOrderState(orderId, OrderState.REFUSED);
     }
 
+    /**
+     * [PUT] Update the state of the given order (identfied by ID) in 'completed', taking into account that the order type is
+     * 'take away'
+     * @param orderId is the order ID
+     * @throws OrderNotFound if there is no order with the given ID
+     */
     @PutMapping("/putCompletedHandOrder")
     @ResponseStatus(code = HttpStatus.OK)
     public void completeHandOrder(@RequestParam(name = "id") Long orderId){
@@ -217,6 +314,12 @@ public class ProviderController {
         orderService.changeOrderState(orderId, OrderState.COMPLETED);
     }
 
+    /**
+     * [PUT] Update the state of the given order (identfied by ID) in 'shipped', aking into account that the order type is
+     * 'delivery' (regardless of rider type)
+     * @param orderId is the order ID
+     * @throws OrderNotFound if there is no order with the given ID
+     */
     @PutMapping("/putShipOrder")
     @ResponseStatus(code = HttpStatus.OK)
     public void putOnShippedOrder(@RequestParam(name = "id") Long orderId){
@@ -227,6 +330,11 @@ public class ProviderController {
         orderService.changeOrderState(orderId, OrderState.SHIPPED);
     }
 
+    /**
+     * [PUT] Update the state of the given order (identfied by ID) in 'completed', regardless of order type
+     * @param orderId is the order ID
+     * @throws OrderNotFound if there is no order with the given ID
+     */
     @PutMapping("/putCompletedOrder")
     @ResponseStatus(code = HttpStatus.OK)
     public void putCompletedOrder(@RequestParam(name = "id") Long orderId){
@@ -237,17 +345,23 @@ public class ProviderController {
         orderService.changeOrderState(orderId, OrderState.COMPLETED);
     }
 
-
-
+    /**
+     * [POST] Create a new menu for the provider
+     * @param menu represent the Menu to be created
+     */
     @PostMapping("/postMenu")
     @ResponseStatus(code = HttpStatus.CREATED)
     public void postNewMenu(@Valid @RequestBody MenuEntity menu){
         log.info("[REST Controller] Post menu");
         providerService.createNewMenu(menu);
 
-
     }
 
+    /**
+     * [GET] Retrieve from the server the menu of the provider identified by his ID
+     * @param providerId is the provider ID
+     * @return MenuEntity expressed as JSON
+     */
     @GetMapping("/{provider-id}/getMenu")
     @ResponseStatus(code = HttpStatus.OK)
     public MenuEntity getMenu(@PathVariable("provider-id") Long providerId){
@@ -255,6 +369,12 @@ public class ProviderController {
         return providerService.getMenu(providerId);
     }
 
+    /**
+     * [POST] Add a new dish to the menu of the provider identified by his ID
+     * @param providerId is the provider ID
+     * @param dish is the dish entity
+     * @return DishEntity just added expressed as JSON
+     */
     @PostMapping("/{provider-id}/addDish")
     @ResponseStatus(code = HttpStatus.CREATED)
     public DishEntity addDish(@PathVariable("provider-id") Long providerId, @Valid @RequestBody DishEntity dish){
@@ -262,6 +382,12 @@ public class ProviderController {
         return providerService.addDish(dish, providerId);
     }
 
+    /**
+     * [PUT] Update a dish in the menu of the provider identified by his ID
+     * @param providerId is the provider ID
+     * @param dish is the dish entity to be updated
+     * @return DishEntity just updated expressed as JSON
+     */
     @PutMapping("/{provider-id}/updateDish")
     @ResponseStatus(code = HttpStatus.OK)
     public DishEntity updateDish(@PathVariable("provider-id") Long providerId,@Valid @RequestBody DishEntity dish){
@@ -270,7 +396,11 @@ public class ProviderController {
 
     }
 
-
+    /**
+     * [DELETE] Delete a dish from the menu of the provider identified by his ID
+     * @param providerId is the provider ID
+     * @param dishId is the dish entity to be deleted
+     */
     @DeleteMapping("/{provider-id}/removeDish")
     @ResponseStatus(code = HttpStatus.OK)
     public void removeDish(@PathVariable("provider-id") Long providerId, @RequestParam(name = "dish_id") Long dishId){
