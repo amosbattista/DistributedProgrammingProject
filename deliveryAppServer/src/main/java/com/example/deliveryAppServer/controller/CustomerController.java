@@ -87,7 +87,7 @@ public class CustomerController {
 
     /**
      * Retrieve from the server the current order of a Customer identified by ID; convert the OrderEntity in
-     * a OrderDto throug a model mapper
+     * a OrderDto through a model mapper
      * @param customerId is the customer ID
      * @return OrderDto expressed as a JSON
      */
@@ -98,13 +98,24 @@ public class CustomerController {
         return modelMapper.convertOrderToDtoForCustomer(order);
     }
 
-    @GetMapping("/order/{order-id}") //
+    /**
+     * Retrieve from the server an order identified by ID; convert the OrderEntity in
+     * a OrderDto through a model mapper
+     * @param orderId is the order ID
+     * @return OrderDto expressed as a JSON
+     */
+    @GetMapping("/order/{order-id}")
     public OrderDto getOrderStateDTO(@PathVariable("order-id") Long orderId){
         log.info("[REST Controller] Get order state, id=: "+orderId);
         OrderEntity order = orderService.getOrderState(orderId);
         return modelMapper.convertOrderToDtoForCustomer(order);
     }
 
+    /**
+     * Create a new customer in the server
+     * @param customer represent the Customer to be created
+     * @return CustomerEntity just created, expressed as a JSON
+     */
     @PostMapping("/postCustomer")
     @ResponseStatus(code = HttpStatus.CREATED)
     public CustomerEntity createNewCustomer(@Valid @RequestBody CustomerEntity customer){
@@ -112,6 +123,11 @@ public class CustomerController {
         return customerService.createNewCustomer(customer);
     }
 
+    /**
+     * Update into the server the CustomerEntity passed;
+     * @param customer represent the Customer to be updated
+     * @return CustomerEntity just updated, expressed as a JSON
+     */
     @PutMapping("/putCustomer")
     @ResponseStatus(code = HttpStatus.OK)
     public CustomerEntity putCustomer(@Valid @RequestBody CustomerEntity customer){
@@ -119,7 +135,7 @@ public class CustomerController {
         return customerService.updateCustomer(customer);
     }
 
-    @PostMapping("/postOrder")
+    @PostMapping("/postOrder") //da eliminare
     @ResponseStatus(code = HttpStatus.CREATED)
     public OrderDto postNewOrder(@Valid @RequestBody OrderEntity order){
         log.info("[REST Controller] Post order");
@@ -128,6 +144,11 @@ public class CustomerController {
 
     }
 
+    /**
+     * Create a new order in the server; convert the OrderDto in OrderEntity through a model mapper
+     * @param orderDto represent the Order to be created
+     * @return the OrderDto just created
+     */
     @PostMapping("/postOrderDto")
     @ResponseStatus(code = HttpStatus.CREATED)
     public OrderDto postNewOrderDto(@Valid @RequestBody OrderDto orderDto){
@@ -138,6 +159,11 @@ public class CustomerController {
 
     }
 
+    /**
+     * Allows the login to a customer, given his credentials
+     * @param params is a Map in which is required to insert username and password
+     * @return a Long that represents the customer ID
+     */
     @PostMapping("/login")
     @ResponseStatus(code = HttpStatus.OK)
     public Long login(@RequestBody Map<String, String> params){
@@ -147,6 +173,11 @@ public class CustomerController {
         return customerService.login(username, password);
     }
 
+    /**
+     * Increase the customer balance, given an increment (can be also negative)
+     * @param increment is a Double that represents the amount of money to be added to the balance
+     * @param customerId is a Long that represents the customer ID
+     */
     @PutMapping("/{customer-id}/balance")
     @ResponseStatus(code = HttpStatus.OK)
     public void increaseBalance(@RequestParam(name = "value") Double increment, @PathVariable("customer-id") Long customerId){
