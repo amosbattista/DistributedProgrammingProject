@@ -10,6 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * It defines and holds the app business logic, regarding the operations that act on the Customer entity.
+ * It performs CRUD queries on the database by using an instance of the Customer's Repository.
+ */
 @Service
 @Slf4j
 public class CustomerServiceImpl extends PersonServiceImpl implements CustomerService {
@@ -23,6 +27,14 @@ public class CustomerServiceImpl extends PersonServiceImpl implements CustomerSe
         personRepository = customerRepository;
     }
 
+    /**
+     * It creates a new customer into the database.
+     *
+     * @param customer is the Customer to be created
+     * @return the CustomerEntity just created
+     * @throws UserAlreadyExists if the customer to be created already exists, checking a violation on the
+     * on unique fields (username and telephoneNumber).
+     */
     @Override
     public CustomerEntity createNewCustomer(CustomerEntity customer) {
 
@@ -33,15 +45,21 @@ public class CustomerServiceImpl extends PersonServiceImpl implements CustomerSe
         if(customerRepository.existsByTelephoneNumber(customer.getTelephoneNumber())){
             throw new UserAlreadyExists("Customer tel. number "+ customer.getTelephoneNumber()+" already exists!");
         }
-
+        customer.setBalance(0);
         CustomerEntity cust = customerRepository.save(customer);
         log.info("[SERVICE] New customer "+customer.getUsername()+" created!");
         return cust;
-
-
-
     }
 
+    /**
+     * It updates an existing customer on database, if he exists. It prevents
+     * the balance from being updated via this method.
+     *
+     * @param newCustomer is the Customer to be updated
+     * @return the CustomerEntity just updated
+     * @throws UserNotFound if the given customer is not present on the database
+     * @throws UserAlreadyExists if the given customer violates unique fields (username and telephoneNumber)
+     */
     @Override
     public CustomerEntity updateCustomer(CustomerEntity newCustomer) {
 
@@ -69,10 +87,6 @@ public class CustomerServiceImpl extends PersonServiceImpl implements CustomerSe
         log.info("[SERVICE]"+newCustomer.getUsername()+" successfully updated!");
         return customer2;
 
-
-
-     //   updateBalance(20.12, customer.getId(), customerRepository);
-      //
 
     }
 

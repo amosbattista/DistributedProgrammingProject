@@ -25,7 +25,8 @@ import java.util.Map;
 @RequestMapping("/api/provider")
 @Slf4j
 /**
- * * Define all the API calls for the customer user
+ * It defines and builds all the API calls for the provider user, using the public methods of server services (customerServices,
+ *  * providerService and orderService). It also uses a mapper to convert dao to dto entities.
  */
 public class ProviderController {
 
@@ -39,7 +40,7 @@ public class ProviderController {
     private ModelMapperDto modelMapper;
 
     /**
-     * [GET] Retrieve from the server the Provider passed through ID
+     * [GET] It retrieves from the server the Provider passed through ID
      * @param providerId  is the ID of the provider to retrieve
      * @return a ProviderEntity expressed as JSON
      * @throws UserNotFound if there is no provider with the given ID
@@ -60,7 +61,7 @@ public class ProviderController {
 
 
     /**
-     * [POST] Create a new provider in the server
+     * [POST] It creates a new provider in the server
      * @param provider represent the Provider to be created
      * @return ProviderEntity just created, expressed as a JSON
      */
@@ -72,7 +73,7 @@ public class ProviderController {
     }
 
     /**
-     * [PUT] Update into the server the ProviderEntity passed;
+     * [PUT] It updates into the server the ProviderEntity passed;
      * @param provider represent the Provider to be updated
      * @return ProviderEntity just updated, expressed as a JSON
      */
@@ -84,7 +85,7 @@ public class ProviderController {
     }
 
     /**
-     * [PUT] Update the provider 'availability' field
+     * [PUT] It updates the provider 'availability' field
      * @param avail is a Boolean that indicates if the provider is available
      * @param providerId is a Long that represents the provider ID
      */
@@ -97,7 +98,7 @@ public class ProviderController {
     }
 
     /**
-     * [POST] Allows the login to a provider, given his credentials
+     * [POST] It allows the login to a provider, given his credentials
      * @param params is a Map in which is required to insert username and password
      * @return a Long that represents the provider ID
      */
@@ -111,7 +112,7 @@ public class ProviderController {
     }
 
     /**
-     * [GET] Retrieve from the server the pending orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
+     * [GET] It retrieves from the server the pending orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
      * List<OrderDto> through a model mapper.
      * @param providerId is the provider ID
      * @return List<OrderDto> expressed as JSON list
@@ -125,7 +126,7 @@ public class ProviderController {
     }
 
     /**
-     * [GET] Retrieve from the server the accepted orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
+     * [GET] It retrieves from the server the accepted orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
      * List<OrderDto> through a model mapper.
      * @param providerId is the provider ID
      * @return List<OrderDto> expressed as JSON list
@@ -139,7 +140,7 @@ public class ProviderController {
     }
 
     /**
-     * [GET] Retrieve from the server the partial-accepted orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
+     * [GET] It retrieves from the server the partial-accepted orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
      * List<OrderDto> through a model mapper.
      * @param providerId is the provider ID
      * @return List<OrderDto> expressed as JSON list
@@ -153,7 +154,7 @@ public class ProviderController {
     }
 
     /**
-     * [GET] Retrieve from the server the shipped orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
+     * [GET] It retrieves from the server the shipped orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
      * List<OrderDto> through a model mapper.
      * @param providerId is the provider ID
      * @return List<OrderDto> expressed as JSON list
@@ -167,7 +168,7 @@ public class ProviderController {
     }
 
     /**
-     * [GET] Retrieve from the server the completed orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
+     * [GET] It retrieves from the server the completed orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
      * List<OrderDto> through a model mapper.
      * @param providerId is the provider ID
      * @return List<OrderDto> expressed as JSON list
@@ -182,7 +183,7 @@ public class ProviderController {
     }
 
     /**
-     * [GET] Retrieve from the server the refused orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
+     * [GET] It retrieves from the server the refused orders list of a given Provider identified by ID; convert the List<OrderEntity> in a
      * List<OrderDto> through a model mapper.
      * @param providerId is the provider ID
      * @return List<OrderDto> expressed as JSON list
@@ -196,7 +197,7 @@ public class ProviderController {
     }
 
     /**
-     * [PUT] Update the state of the given order (identfied by ID) in 'accepted', taking into account that the order type is 'take away'
+     * [PUT] It updates the state of the given order (identfied by ID) in 'accepted', taking into account that the order type is 'take away'
      * @param orderId is the order ID
      * @throws OrderNotFound if there is no order with the given ID
      */
@@ -204,14 +205,14 @@ public class ProviderController {
     @ResponseStatus(code = HttpStatus.OK)
     public void acceptTakeAwayOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put accept order");
-        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.TAKE_AWAY)){
+        if(!orderService.getOrder(orderId).getOrderType().equals(OrderType.TAKE_AWAY)){
             throw new OrderNotFound("Wrong order type!");
         }
         orderService.changeOrderState(orderId, OrderState.ACCEPTED);
     }
 
     /**
-     * [PUT] Update the state of the given order (identfied by ID) in 'accepted', taking into account that the order type is
+     * [PUT] It updates the state of the given order (identfied by ID) in 'accepted', taking into account that the order type is
      * a delivery that does not use the riders-app (delivery with your own riders)
      * @param orderId is the order ID
      * @throws OrderNotFound if there is no order with the given ID
@@ -220,7 +221,7 @@ public class ProviderController {
     @ResponseStatus(code = HttpStatus.OK)
     public void acceptNoRiderOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put accept order");
-        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY)){
+        if(!orderService.getOrder(orderId).getOrderType().equals(OrderType.DELIVERY)){
             throw new OrderNotFound("Wrong order type!");
         }
 
@@ -230,7 +231,7 @@ public class ProviderController {
 
 
     /**
-     * [PUT] Update the state of the given order (identfied by ID) in 'accepted', taking into account that the order type is
+     * [PUT] It updates the state of the given order (identfied by ID) in 'accepted', taking into account that the order type is
      * a delivery that use the riders-app.
      * @param orderId is the order ID
      * @throws OrderNotFound if there is no order with the given ID
@@ -239,7 +240,7 @@ public class ProviderController {
     @ResponseStatus(code = HttpStatus.OK)
     public void semiAcceptedOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put accept order");
-        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY)){
+        if(!orderService.getOrder(orderId).getOrderType().equals(OrderType.DELIVERY)){
             throw new OrderNotFound("Wrong order type!");
         }
 
@@ -248,7 +249,7 @@ public class ProviderController {
     }
 
     /**
-     * [PUT] Update the state of the given order (identfied by ID) in 'refused', taking into account that the order type is
+     * [PUT] It updates the state of the given order (identfied by ID) in 'refused', taking into account that the order type is
      * 'take away'
      * @param orderId is the order ID
      * @throws OrderNotFound if there is no order with the given ID
@@ -257,7 +258,7 @@ public class ProviderController {
     @ResponseStatus(code = HttpStatus.OK)
     public void refuseTaWOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put refuse order");
-        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.TAKE_AWAY)){
+        if(!orderService.getOrder(orderId).getOrderType().equals(OrderType.TAKE_AWAY)){
             throw new OrderNotFound("Wrong order type!");
         }
 
@@ -265,7 +266,7 @@ public class ProviderController {
     }
 
     /**
-     * [PUT] Update the state of the given order (identfied by ID) in 'refused', taking into account that the order type is
+     * [PUT] It updates the state of the given order (identfied by ID) in 'refused', taking into account that the order type is
      * a delivery that does not use the riders-app (delivery with your own riders)
      * @param orderId is the order ID
      * @throws OrderNotFound if there is no order with the given ID
@@ -274,7 +275,7 @@ public class ProviderController {
     @ResponseStatus(code = HttpStatus.OK)
     public void refuseNoRiderOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put refuse order");
-        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY)){
+        if(!orderService.getOrder(orderId).getOrderType().equals(OrderType.DELIVERY)){
             throw new OrderNotFound("Wrong order type!");
         }
         orderService.changeOrderType(orderId, OrderType.DELIVERY_NORIDER);
@@ -282,7 +283,7 @@ public class ProviderController {
     }
 
     /**
-     * [PUT] Update the state of the given order (identfied by ID) in 'refused', taking into account that the order type is
+     * [PUT] It updates the state of the given order (identfied by ID) in 'refused', taking into account that the order type is
      * a delivery that use the riders-app.
      * @param orderId is the order ID
      * @throws OrderNotFound if there is no order with the given ID
@@ -291,7 +292,7 @@ public class ProviderController {
     @ResponseStatus(code = HttpStatus.OK)
     public void refuseRiderOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put refuse order");
-        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY)){
+        if(!orderService.getOrder(orderId).getOrderType().equals(OrderType.DELIVERY)){
             throw new OrderNotFound("Wrong order type!");
         }
         orderService.changeOrderType(orderId, OrderType.DELIVERY_RIDERS);
@@ -299,7 +300,7 @@ public class ProviderController {
     }
 
     /**
-     * [PUT] Update the state of the given order (identfied by ID) in 'completed', taking into account that the order type is
+     * [PUT] It updates the state of the given order (identfied by ID) in 'completed', taking into account that the order type is
      * 'take away'
      * @param orderId is the order ID
      * @throws OrderNotFound if there is no order with the given ID
@@ -308,14 +309,14 @@ public class ProviderController {
     @ResponseStatus(code = HttpStatus.OK)
     public void completeHandOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put completed order");
-        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.TAKE_AWAY)){
+        if(!orderService.getOrder(orderId).getOrderType().equals(OrderType.TAKE_AWAY)){
             throw new OrderNotFound("Wrong order type!");
         }
         orderService.changeOrderState(orderId, OrderState.COMPLETED);
     }
 
     /**
-     * [PUT] Update the state of the given order (identfied by ID) in 'shipped', aking into account that the order type is
+     * [PUT] It updates the state of the given order (identfied by ID) in 'shipped', aking into account that the order type is
      * 'delivery' (regardless of rider type)
      * @param orderId is the order ID
      * @throws OrderNotFound if there is no order with the given ID
@@ -324,14 +325,14 @@ public class ProviderController {
     @ResponseStatus(code = HttpStatus.OK)
     public void putOnShippedOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put accept order");
-        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY_NORIDER)){
+        if(!orderService.getOrder(orderId).getOrderType().equals(OrderType.DELIVERY_NORIDER)){
             throw new OrderNotFound("Wrong order type!");
         }
         orderService.changeOrderState(orderId, OrderState.SHIPPED);
     }
 
     /**
-     * [PUT] Update the state of the given order (identfied by ID) in 'completed', regardless of order type
+     * [PUT] It updates the state of the given order (identfied by ID) in 'completed', regardless of order type
      * @param orderId is the order ID
      * @throws OrderNotFound if there is no order with the given ID
      */
@@ -339,14 +340,14 @@ public class ProviderController {
     @ResponseStatus(code = HttpStatus.OK)
     public void putCompletedOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Put accept order");
-        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY_NORIDER)){
+        if(!orderService.getOrder(orderId).getOrderType().equals(OrderType.DELIVERY_NORIDER)){
             throw new OrderNotFound("Wrong order type!");
         }
         orderService.changeOrderState(orderId, OrderState.COMPLETED);
     }
 
     /**
-     * [POST] Create a new menu for the provider
+     * [POST] It creates a new menu for the provider
      * @param menu represent the Menu to be created
      */
     @PostMapping("/postMenu")
@@ -358,7 +359,7 @@ public class ProviderController {
     }
 
     /**
-     * [GET] Retrieve from the server the menu of the provider identified by his ID
+     * [GET] It retrieves from the server the menu of the provider identified by his ID
      * @param providerId is the provider ID
      * @return MenuEntity expressed as JSON
      */
@@ -370,7 +371,7 @@ public class ProviderController {
     }
 
     /**
-     * [POST] Add a new dish to the menu of the provider identified by his ID
+     * [POST] It adds a new dish to the menu of the provider identified by his ID
      * @param providerId is the provider ID
      * @param dish is the dish entity
      * @return DishEntity just added expressed as JSON
@@ -383,7 +384,7 @@ public class ProviderController {
     }
 
     /**
-     * [PUT] Update a dish in the menu of the provider identified by his ID
+     * [PUT] It updates a dish in the menu of the provider identified by his ID
      * @param providerId is the provider ID
      * @param dish is the dish entity to be updated
      * @return DishEntity just updated expressed as JSON
@@ -397,7 +398,7 @@ public class ProviderController {
     }
 
     /**
-     * [DELETE] Delete a dish from the menu of the provider identified by his ID
+     * [DELETE] It deletes a dish from the menu of the provider identified by his ID
      * @param providerId is the provider ID
      * @param dishId is the dish entity to be deleted
      */

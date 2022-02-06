@@ -8,6 +8,15 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.io.Serializable;
 
+/**
+ *  It's a concrete entity of the system that will be stored persistently in DB.
+ *  It consists of a DishEntity and a OrderEntity that together represent a multiple primary key.
+ *
+ *  It is used to store, for each order, dishes selected by customer and their quantity.
+ *  It is required because the customer might want more than one same dish.
+ *
+ *  Each DishOrderAssociation maintains the references to order and dish with a many-to-one DB constraint.
+ */
 @Entity
 @Getter
 @Setter

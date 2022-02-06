@@ -10,6 +10,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * It defines and holds the app business logic, regarding the operations that act on the Rider entity.
+ * It performs CRUD queries on the database by using an instance of the Rider's Repository.
+ */
 @Service
 @Slf4j
 public class RiderServiceImpl extends PersonServiceImpl implements RiderService {
@@ -22,6 +26,13 @@ public class RiderServiceImpl extends PersonServiceImpl implements RiderService 
         personRepository = riderRepository;
     }
 
+    /**
+     * It creates a new rider into the database.
+     * @param rider is the Rider to be created
+     * @return the RiderEntity just created
+     * @throws UserAlreadyExists if the rider to be created already exists, checking a violation on the
+     * on unique fields (username and telephoneNumber).
+     */
     @Override
     public RiderEntity createNewRider(RiderEntity rider){
 
@@ -38,6 +49,15 @@ public class RiderServiceImpl extends PersonServiceImpl implements RiderService 
         return rider;
     }
 
+    /**
+     * It updates an existing rider on database, if he exists. It prevents
+     * the balance from being updated via this method.
+     *
+     * @param newRider is the Customer to be updated
+     * @return the RiderEntity just updated
+     * @throws UserNotFound if the given rider is not present on the database
+     * @throws UserAlreadyExists if the given rider violates unique fields (username and telephoneNumber)
+     */
     @Override
     public RiderEntity updateRider(RiderEntity newRider){
 

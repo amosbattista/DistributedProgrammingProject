@@ -12,6 +12,15 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ *  It's a concrete entity of the system that will be stored persistently in DB.
+ *  It represents a rider, who can deliver orders that have been accepted by the provider and are waiting for a rider.
+ *
+ *  Each rider must specify his vehicle type.
+ *
+ * Each rider maintains a list of own orders, for this reason a one-to-many DB constraint
+ * is specified on 'orderList' field (each rider can have multiple orders, but one rider belongs to only one customer)
+ */
 @Entity
 @Data
 @EntityListeners(AuditingEntityListener.class) //Non necessario

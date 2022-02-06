@@ -12,11 +12,22 @@ import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.time.LocalDate;
 
+/**
+ * It's an abstract system entity.
+ * Represents the parent class of CustomerEntity, ProviderEntity and RiderEntity.
+ * It is characterized by all the fields common to the three entities:
+ * - name
+ * - surname
+ * - birthdate
+ * - iban
+ * - telephone number
+ * - balance
+ */
 @Entity
 @Data
 @EntityListeners(AuditingEntityListener.class) //Non necessario
 @DynamicUpdate
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS) //create one table on DB for each concrete class that inherits it
 public abstract class PersonEntity extends UserEntity implements Serializable {
 
     @NotBlank
@@ -44,7 +55,7 @@ public abstract class PersonEntity extends UserEntity implements Serializable {
 
     public void updateBalance(double increment) {
         if(getBalance() + increment < 0){
-            throw new InsufficientBalanceException(); //da cambiare
+            throw new InsufficientBalanceException();
         }
 
         balance = balance+increment;

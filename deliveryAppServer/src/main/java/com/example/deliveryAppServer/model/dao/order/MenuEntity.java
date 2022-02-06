@@ -10,6 +10,16 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ *  It's a concrete entity of the system that will be stored persistently in DB.
+ *  It represents the provider menu. The 'id' field represents its primary key in the DB.
+ *
+ * Each menu maintains a list of own dishes, for this reason a one-to-many DB constraint
+ * is specified on 'dishList' field (each menu can have multiple dishes, but one dish belongs to only one menu)
+ *
+ * Each menu maintains the reference to the provider, with a one-to-one DB constraint (each menu has one provider,
+ * and one provider has one menu)
+ */
 @Entity
 @Getter
 @Setter
@@ -22,7 +32,7 @@ public class MenuEntity implements Serializable {
     private Long id;
 
     @OneToMany(targetEntity=DishEntity.class,cascade = CascadeType.ALL , fetch = FetchType.LAZY, mappedBy = "menu")
-    private List<DishEntity> dishEntities;
+    private List<DishEntity> dishList;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToOne(mappedBy = "menu")
@@ -30,13 +40,13 @@ public class MenuEntity implements Serializable {
 
     public void addDish(DishEntity dish){
 
-        dishEntities.add(dish);
+        dishList.add(dish);
 
     }
 
     public void removeDish(DishEntity dish){
 
-        dishEntities.remove(dish);
+        dishList.remove(dish);
 
     }
 

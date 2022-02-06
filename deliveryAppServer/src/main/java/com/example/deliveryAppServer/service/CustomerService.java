@@ -9,5 +9,4 @@ public interface CustomerService extends PersonService {
     public CustomerEntity updateCustomer(CustomerEntity customer);
 
 
-
 }

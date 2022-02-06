@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OrderService {
     public OrderEntity createNewOrder(OrderEntity order);
-    public OrderEntity getOrderState(Long orderId);
+    public OrderEntity getOrder(Long orderId);
     public List<OrderEntity> getOrdersByState(OrderState orderState);
     public List<OrderEntity> getCustomerOrdersHistory(Long customerId);
     public List<OrderEntity> getProviderOrdersByState(Long providerId, OrderState orderState);

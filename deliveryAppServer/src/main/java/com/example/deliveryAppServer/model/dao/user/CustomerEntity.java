@@ -12,6 +12,15 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.List;
 
+/**
+ *  It's a concrete entity of the system that will be stored persistently in DB.
+ *  It represents a customer, who can place orders on the app, selecting dishes from providers menu.
+ *
+ *  Each customer must specify his address to ensure that a rider can deliver the order.
+ *
+ * Each customer maintains a list of own orders, for this reason a one-to-many DB constraint
+ * is specified on 'orderList' field (each customer can have multiple orders, but one order belongs to only one customer)
+ */
 @Entity
 @Data
 @EntityListeners(AuditingEntityListener.class) //Non necessario

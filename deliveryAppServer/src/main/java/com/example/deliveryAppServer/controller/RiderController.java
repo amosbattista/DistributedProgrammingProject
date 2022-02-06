@@ -22,6 +22,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/rider")
 @Slf4j
+/**
+ * It defines and builds all the API calls for the rider user, using the public methods of server services (customerServices,
+ * providerService and orderService). It also uses a mapper to convert dao to dto entities.
+ */
 public class RiderController {
 
     @Autowired
@@ -34,6 +38,12 @@ public class RiderController {
     private ModelMapperDto modelMapper;
 
 
+    /**
+     * [GET] It retrieves from the server the Rider passed through ID
+     * @param riderId  is the ID of the rider to retrieve
+     * @return a RiderEntity expressed as JSON
+     * @throws UserNotFound if there is no rider with the given ID
+     */
     @GetMapping("/{rider-id}/myinfo")
     public RiderEntity getMyInfo(@PathVariable("rider-id") Long riderId){
         log.info("[REST Controller] Get rider info for id: "+riderId);
@@ -45,9 +55,13 @@ public class RiderController {
             throw new UserNotFound();
         }
 
-
     }
 
+    /**
+     * [POST] It creates a new rider in the server
+     * @param rider represent the Rider to be created
+     * @return RiderEntity just created, expressed as a JSON
+     */
     @PostMapping("/postRider")
     @ResponseStatus(code = HttpStatus.CREATED)
     public RiderEntity createNewRider(@Valid @RequestBody RiderEntity rider){
@@ -55,6 +69,11 @@ public class RiderController {
         return riderService.createNewRider(rider);
     }
 
+    /**
+     * [POST] It allows the login to a rider, given his credentials
+     * @param params is a Map in which is required to insert username and password
+     * @return a Long that represents the rider ID
+     */
     @PostMapping("/login")
     @ResponseStatus(code = HttpStatus.OK)
     public Long login(@RequestBody Map<String, String> params){
@@ -64,6 +83,11 @@ public class RiderController {
         return riderService.login(username, password);
     }
 
+    /**
+     * [PUT] It updates into the server the RiderEntity passed;
+     * @param rider represent the rider to be updated
+     * @return RiderEntity just updated, expressed as a JSON
+     */
     @PutMapping("/updateRider")
     @ResponseStatus(code = HttpStatus.OK)
     public RiderEntity updateRider(@Valid @RequestBody RiderEntity rider){
@@ -71,6 +95,24 @@ public class RiderController {
         return riderService.updateRider(rider);
     }
 
+    /**
+     * [GET] It retrieves from the server an order identified by ID; convert the OrderEntity in
+     * a OrderDto through a model mapper
+     * @param orderId is the order ID
+     * @return OrderDto expressed as a JSON
+     */
+    @GetMapping("/order/{order-id}")
+    public OrderDto getOrderDtoById(@PathVariable("order-id") Long orderId){
+        log.info("[REST Controller] Get order state, id=: "+orderId);
+        OrderEntity order = orderService.getOrder(orderId);
+        return modelMapper.convertOrderToDto(order);
+    }
+
+    /**
+     * [GET] It retrieves from the server the whole partial-accepted orders list; convert the List<OrderEntity> in a
+     * List<OrderDto> through a model mapper.
+     * @return List<OrderDto> expressed as JSON list
+     */
     @GetMapping("/getSemiAcceptedOrders")
     @ResponseStatus(code = HttpStatus.OK)
     public List<OrderDto> getSemiAcceptedOrders(){
@@ -80,6 +122,12 @@ public class RiderController {
     }
 
 
+    /**
+     * [GET] It retrieves from the server a list of orders that have been accepted by the rider, identified by ID;
+     * convert the List<OrderEntity> in a List<OrderDto> through a model mapper.
+     * @param riderId is the provider ID
+     * @return List<OrderDto> expressed as JSON list
+     */
     @GetMapping("/{rider-id}/getAtLeastAcceptedOrders")
     @ResponseStatus(code = HttpStatus.OK)
     public List<OrderDto> getAtLeastAcceptedOrders(@PathVariable(name = "rider-id") Long riderId){
@@ -88,46 +136,51 @@ public class RiderController {
         return modelMapper.convertOrderListToDto(orderEntityList);
     }
 
+    /**
+     * [PUT] It updates the state of the given order (identfied by ID) in 'accepted'.
+     * @param orderId is the order ID
+     * @throws OrderNotFound if there is no order with the given ID
+     */
     @PutMapping("/{rider-id}/acceptOrder")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public void acceptOrder(@RequestParam(name = "id") Long orderId, @PathVariable("rider-id") Long riderId){
         log.info("[REST Controller] Accept order");
-        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY_RIDERS)){
+        if(!orderService.getOrder(orderId).getOrderType().equals(OrderType.DELIVERY_RIDERS)){
             throw new OrderNotFound("Wrong order type!");
         }
         orderService.changeOrderState(orderId, OrderState.ACCEPTED);
         orderService.setRiderOrder(orderId, riderId);
     }
 
+    /**
+     * [PUT] It updates the state of the given order (identfied by ID) in 'shipped'.
+     * @param orderId is the order ID
+     * @throws OrderNotFound if there is no order with the given ID
+     */
     @PutMapping("/shipOrder")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public void shipOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Ship order");
-        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY_RIDERS)){
+        if(!orderService.getOrder(orderId).getOrderType().equals(OrderType.DELIVERY_RIDERS)){
             throw new OrderNotFound("Wrong order type!");
         }
         orderService.changeOrderState(orderId, OrderState.SHIPPED);
     }
 
+    /**
+     * [PUT] It updates the state of the given order (identfied by ID) in 'completed'.
+     * @param orderId is the order ID
+     * @throws OrderNotFound if there is no order with the given ID
+     */
     @PutMapping("/deliveredOrder")
     @ResponseStatus(code = HttpStatus.ACCEPTED)
     public void deliveredOrder(@RequestParam(name = "id") Long orderId){
         log.info("[REST Controller] Delivered order");
-        if(!orderService.getOrderState(orderId).getOrderType().equals(OrderType.DELIVERY_RIDERS)){
+        if(!orderService.getOrder(orderId).getOrderType().equals(OrderType.DELIVERY_RIDERS)){
             throw new OrderNotFound("Wrong order type!");
         }
         orderService.changeOrderState(orderId, OrderState.COMPLETED);
     }
-
-    @GetMapping("/order/{order-id}") // serve??
-    public OrderDto getOrderDtoById(@PathVariable("order-id") Long orderId){
-        log.info("[REST Controller] Get order state, id=: "+orderId);
-        OrderEntity order = orderService.getOrderState(orderId);
-        return modelMapper.convertOrderToDtoForCustomer(order);
-    }
-
-
-
 
 
 }

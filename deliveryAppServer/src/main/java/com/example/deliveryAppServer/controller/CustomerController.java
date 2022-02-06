@@ -19,12 +19,13 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * It defines and builds all the API calls for the customer user, using the public methods of server services (customerServices,
+ * providerService and orderService). It also uses a mapper to convert dao to dto entities.
+ */
 @RestController
 @RequestMapping("/api/customer")
 @Slf4j
-/**
- * Define all the API calls for the customer user
- */
 public class CustomerController {
 
     @Autowired
@@ -41,7 +42,7 @@ public class CustomerController {
 
 
     /**
-     * [GET] Retrieve from the server the Customer passed through ID
+     * [GET] It retrieves from the server the Customer passed through ID
      * @param customerId is the ID of the customer to retrieve
      * @return a CustomerEntity expressed as JSON
      * @throws UserNotFound if there is no customer with the given ID
@@ -60,7 +61,7 @@ public class CustomerController {
     }
 
     /**
-     * [GET] Retrieve form the server a list of available ProviderEntity; convert the List<ProviderEntity> in a
+     * [GET] It retrieves form the server a list of available ProviderEntity; convert the List<ProviderEntity> in a
      * List<ProviderDto> through a model mapper.
      * @return List<ProviderDto> expressed as JSON list
      */
@@ -72,7 +73,7 @@ public class CustomerController {
     }
 
     /**
-     * [GET] Retrieve from the server the orders list of a given Customer identified by ID; convert the List<OrderEntity> in a
+     * [GET] It retrieves from the server the orders list of a given Customer identified by ID; convert the List<OrderEntity> in a
      * List<OrderDto> through a model mapper.
      * @param customerId is the customer ID
      * @return List<OrderDto> expressed as JSON list
@@ -86,7 +87,7 @@ public class CustomerController {
     }
 
     /**
-     * [GET] Retrieve from the server the current order of a Customer identified by ID; convert the OrderEntity in
+     * [GET] It retrieves from the server the current order of a Customer identified by ID; convert the OrderEntity in
      * a OrderDto through a model mapper
      * @param customerId is the customer ID
      * @return OrderDto expressed as a JSON
@@ -95,11 +96,11 @@ public class CustomerController {
     public OrderDto getCurrentOrderDTO(@PathVariable("customer-id") Long customerId){
         log.info("[REST Controller] Get current order for customer: "+customerId);
         OrderEntity order = orderService.getCurrentOrder(customerId);
-        return modelMapper.convertOrderToDtoForCustomer(order);
+        return modelMapper.convertOrderToDto(order);
     }
 
     /**
-     * [GET] Retrieve from the server an order identified by ID; convert the OrderEntity in
+     * [GET] It retrieves from the server an order identified by ID; convert the OrderEntity in
      * a OrderDto through a model mapper
      * @param orderId is the order ID
      * @return OrderDto expressed as a JSON
@@ -107,12 +108,12 @@ public class CustomerController {
     @GetMapping("/order/{order-id}")
     public OrderDto getOrderStateDTO(@PathVariable("order-id") Long orderId){
         log.info("[REST Controller] Get order state, id=: "+orderId);
-        OrderEntity order = orderService.getOrderState(orderId);
-        return modelMapper.convertOrderToDtoForCustomer(order);
+        OrderEntity order = orderService.getOrder(orderId);
+        return modelMapper.convertOrderToDto(order);
     }
 
     /**
-     * [POST] Create a new customer in the server
+     * [POST] It creates a new customer in the server
      * @param customer represent the Customer to be created
      * @return CustomerEntity just created, expressed as a JSON
      */
@@ -124,7 +125,7 @@ public class CustomerController {
     }
 
     /**
-     * [PUT] Update into the server the CustomerEntity passed;
+     * [PUT] It updates into the server the CustomerEntity passed;
      * @param customer represent the Customer to be updated
      * @return CustomerEntity just updated, expressed as a JSON
      */
@@ -140,12 +141,12 @@ public class CustomerController {
     public OrderDto postNewOrder(@Valid @RequestBody OrderEntity order){
         log.info("[REST Controller] Post order");
         OrderEntity newOrder = orderService.createNewOrder(order);
-        return modelMapper.convertOrderToDtoForCustomer(newOrder);
+        return modelMapper.convertOrderToDto(newOrder);
 
     }
 
     /**
-     * [POST] Create a new order in the server; convert the OrderDto in OrderEntity through a model mapper
+     * [POST] It creates a new order in the server; convert the OrderDto in OrderEntity through a model mapper
      * @param orderDto represent the Order to be created
      * @return the OrderDto just created
      */
@@ -155,12 +156,12 @@ public class CustomerController {
         log.info("[REST Controller] Post order");
         OrderEntity orderDao = modelMapper.convertOrderDtoToDao(orderDto);
         OrderEntity newOrder = orderService.createNewOrder(orderDao);
-        return modelMapper.convertOrderToDtoForCustomer(newOrder);
+        return modelMapper.convertOrderToDto(newOrder);
 
     }
 
     /**
-     * [POST] Allows the login to a customer, given his credentials
+     * [POST] It allows the login to a customer, given his credentials
      * @param params is a Map in which is required to insert username and password
      * @return a Long that represents the customer ID
      */
@@ -174,7 +175,7 @@ public class CustomerController {
     }
 
     /**
-     * [PUT] Increase the customer balance, given an increment (can be also negative)
+     * [PUT] It increases the customer balance, given an increment (can be also negative)
      * @param increment is a Double that represents the amount of money to be added to the balance
      * @param customerId is a Long that represents the customer ID
      */

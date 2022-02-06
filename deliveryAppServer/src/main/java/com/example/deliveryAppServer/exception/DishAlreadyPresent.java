@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class DishAlreadyPresent extends RuntimeException{
 
-
     public DishAlreadyPresent() {
         super("Dish already present!");
     }

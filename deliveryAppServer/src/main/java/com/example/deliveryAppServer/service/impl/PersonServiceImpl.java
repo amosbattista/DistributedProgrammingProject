@@ -11,15 +11,27 @@ import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
 
+/**
+ * It defines and holds the app business logic, regarding the operations that act on the Person entity.
+ * It performs CRUD queries on the database by using an instance of the Person Repository.
+ */
 @Service
 public class PersonServiceImpl <Person extends PersonEntity, PersonId extends Long> implements PersonService <Person, PersonId>{
 
     @Autowired
     PersonRepository<Person, PersonId> personRepository;
 
+
+    /**
+     * It retrieves the user ID from the database, checking if the credentials are correct
+     * @param username is the username of the Person who want to be logged
+     * @param password is the password of the Person who want to be logged
+     * @throws InvalidCredentials if the given username is not on the database or if the
+     * given password does not match with the correct one.
+     * @return the user ID
+     */
     @Override
     public Long login(String username, String password) {
-
 
         Person personEntity;
 
@@ -34,6 +46,11 @@ public class PersonServiceImpl <Person extends PersonEntity, PersonId extends Lo
 
     }
 
+    /**
+     * It updates an existing person on database, if he exists, changing only his balance
+     * @param valueIncrement is the increment to be added to the previous balance value (it can be negative)
+     * @param id identify the Person to be updated
+     */
     @Override
     public void updateBalance(Double valueIncrement, PersonId id) {
 
