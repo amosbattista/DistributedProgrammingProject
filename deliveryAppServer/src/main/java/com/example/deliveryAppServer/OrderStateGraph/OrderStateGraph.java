@@ -8,6 +8,28 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This is a utility class used to check if the status change of an order is correct.
+ *
+ * It makes use of three graphs, each for a specific type of order:
+ *      - takeAwayGraph: is used for an Order whose delivery is a takeaway.
+ *                       for this case we can have two different order status sequences:
+ *                       1) PENDING->ACCEPTED->COMPLETED
+ *                       2) PENDING->REFUSED
+ *
+ *      - deliveryNoRiderGraph: is used for an Order whose delivery is a home delivery, made by a provider's rider.
+ *                              for this case we can have two different order status sequences:
+ *                              1) PENDING->ACCEPTED->SHIPPED->COMPLETED
+*                               2) PENDING->REFUSED
+ *
+ *      - deliveryRiderGraph is used for an Order whose delivery is a home delivery, made by a rider app
+ *                              for this case we can have three different order status sequences:
+ *                              1) PENDING->SEMI_ACCEPTED->ACCEPTED->SHIPPED->COMPLETED
+ *                              2) PENDING->REFUSED
+ *                              3) PENDING->SEMI_ACCEPTED->REFUSED
+ *
+ *
+ */
 public class OrderStateGraph {
     private HashMap<OrderState, List<OrderState>> takeAwayGraph;
     private HashMap<OrderState, List<OrderState>> deliveryNoRiderGraph;
