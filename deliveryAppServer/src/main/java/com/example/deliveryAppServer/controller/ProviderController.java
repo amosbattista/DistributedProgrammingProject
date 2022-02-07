@@ -26,7 +26,7 @@ import java.util.Map;
 @Slf4j
 /**
  * It defines and builds all the API calls for the provider user, using the public methods of server services (customerServices,
- *  * providerService and orderService). It also uses a mapper to convert dao to dto entities.
+ *   providerService and orderService). It also uses a mapper to convert dao to dto entities.
  */
 public class ProviderController {
 

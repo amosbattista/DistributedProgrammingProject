@@ -268,6 +268,10 @@ public class OrderServiceImpl implements OrderService{
         return orderRepository.findAllByRiderIdAndOrderStateIn(riderId, List.of(ACCEPTED, SHIPPED, COMPLETED));
     }
 
+    /**
+     * It defines a thread that 10 minutes before the delivery of the order checks if that order has not yet been accepted:
+     * in this case the order is automatically refused.
+     */
     @Scheduled(fixedDelay = 10000)
     public void refuseExpiredOrders(){
         log.info("Thread to delete expired order started");

@@ -28,8 +28,7 @@ public class ModelMapperDto {
      * @return the ProviderDto just converted
      */
     public ProviderDto convertToDto(ProviderEntity provider) {
-        ProviderDto postDto = modelMapper.map(provider, ProviderDto.class);
-        return postDto;
+        return modelMapper.map(provider, ProviderDto.class);
     }
 
     /**
@@ -38,8 +37,7 @@ public class ModelMapperDto {
      * @return the List<ProviderDto> just converted
      */
     public List<ProviderDto> convertProviderListToDto(List<ProviderEntity> providerList){
-        List<ProviderDto> postDtoList = Arrays.asList(modelMapper.map(providerList, ProviderDto[].class));
-        return postDtoList;
+        return Arrays.asList(modelMapper.map(providerList, ProviderDto[].class));
     }
 
     /**
@@ -73,9 +71,8 @@ public class ModelMapperDto {
      * @return the OrderEntity just converted
      */
     public OrderEntity convertOrderDtoToDao(OrderDto orderDto) {
-        OrderEntity order = modelMapper.map(orderDto, OrderEntity.class);
 
-        return order;
+        return modelMapper.map(orderDto, OrderEntity.class);
     }
 
 }
